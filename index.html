@@ -14,50 +14,88 @@
 <h1>Convert video H264</h1>
 
 <h3>Choose MP4 files</h3>
-<input type="file" id="input" multiple onchange="handleFiles(this.files)">
+<input type="file" id="input-files" multiple onchange="handleFiles(this.files)">
 
-<button type="button" id="button" onclick="convertH264()">Start</button>
-</body>
+<button type="button" id="btn-convert" onclick="convertH264()">Start</button>
 
 <div id="progress"></div>
+</body>
 
 <script>
-  const spawn = require('child_process').spawn;
+  const {spawn, exec} = require('child_process');
   const path = require('path');
   const progress = document.getElementById('progress');
 
   let selectedFiles = [];
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Check FFMPEG was installed
+    exec('ffmpeg -version', (err, stdout, stderr) => {
+      if (err || stderr) {
+        document.getElementById('input-files').setAttribute('disabled', 'true');
+        document.getElementById('btn-convert').setAttribute('disabled', 'true');
+        alert('Please install FFMPEG first!');
+      }
+    })
+
+    // Request enable Desktop Notification
+    if (Notification && Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+  });
 
   function handleFiles(files) {
     selectedFiles = files;
   }
 
   function convertH264() {
-    for (let i = 0; i < selectedFiles.length; i++) {
-      let file = selectedFiles[i];
-      let fileExtension = path.extname(file.name);
-      let newFileName = path.basename(file.name, fileExtension) + '-h264' + fileExtension;
-      let newFilePath = path.dirname(file.path) + '/' + newFileName;
+    if (selectedFiles && selectedFiles.length > 0) {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        let file = selectedFiles[i];
+        let fileExtension = path.extname(file.name);
+        let newFileName = path.basename(file.name, fileExtension) + '-h264' + fileExtension;
+        let newFilePath = path.dirname(file.path) + '/' + newFileName;
 
-      if (fileExtension != '.mp4') {
-        alert('Only support mp4 files');
-      } else {
-        const ffpmeg = spawn('ffmpeg', ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], { shell: true });
+        if (fileExtension != '.mp4') {
+          alert('Only support mp4 files');
+        } else {
+          const ffpmeg = spawn('ffmpeg', ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true});
 
-        ffpmeg.stdout.on('data', (data) => {
-          console.log(data.toString());
-        });
+          ffpmeg.stdout.on('data', (data) => {
+            console.log(data.toString());
+          });
 
-        ffpmeg.stderr.on('data', (data) => {
-          console.log(data.toString());
-          progress.innerHTML += '<p>' + data.toString() + '</p>';
-          progress.scrollTop = progress.scrollHeight - progress.clientHeight;
-        });
+          ffpmeg.stderr.on('data', (data) => {
+            console.log(data.toString());
+            progress.innerHTML += '<p>' + data.toString() + '</p>';
+            progress.scrollTop = progress.scrollHeight - progress.clientHeight;
+          });
 
-        ffpmeg.on('exit', (code) => {
-          console.log(`Child exited with code ${code}`);
-        });
+          ffpmeg.on('exit', (code) => {
+            console.log(`Child exited with code ${code}`);
+
+            // todo: if app window lost focus
+            if (true) {
+              notifyDesktop('All the files was converted.');
+            }
+          });
+        }
       }
+    }
+  }
+
+  function notifyDesktop(message) {
+    if (Notification && Notification.permission === 'granted') {
+      // Open Notification
+      let notification = new Notification('Finish', {
+        icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+        body: message,
+      });
+
+      // Onclick to Notification
+      notification.onclick = function () {
+        // todo:Open app window
+      };
     }
   }
 </script>
