@@ -1,0 +1,22 @@
+{
+  "name": "convert-video-h264",
+  "productName": "Convert video H264",
+  "version": "1.0.0",
+  "description": "Convert video H264 base on FFMPEG",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "",
+  "keywords": [
+    "Electron",
+    "FFMPEG",
+    "H264",
+    "Conver video"
+  ],
+  "author": "Robin Huy",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "~1.6.2"
+  }
+}

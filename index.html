@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Convert video H264</title>
+    <style>
+        #progress {
+            height: 200px;
+            overflow: scroll;
+        }
+    </style>
+</head>
+<body>
+<h1>Convert video H264</h1>
+
+<h3>Choose MP4 files</h3>
+<input type="file" id="input" multiple onchange="handleFiles(this.files)">
+
+<button type="button" id="button" onclick="convertH264()">Start</button>
+</body>
+
+<div id="progress"></div>
+
+<script>
+  const spawn = require('child_process').spawn;
+  const path = require('path');
+  const progress = document.getElementById('progress');
+
+  let selectedFiles = [];
+
+  function handleFiles(files) {
+    selectedFiles = files;
+  }
+
+  function convertH264() {
+    for (let i = 0; i < selectedFiles.length; i++) {
+      let file = selectedFiles[i];
+      let fileExtension = path.extname(file.name);
+      let newFileName = path.basename(file.name, fileExtension) + '-h264' + fileExtension;
+      let newFilePath = path.dirname(file.path) + '/' + newFileName;
+
+      if (fileExtension != '.mp4') {
+        alert('Only support mp4 files');
+      } else {
+        const ffpmeg = spawn('ffmpeg', ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], { shell: true });
+
+        ffpmeg.stdout.on('data', (data) => {
+          console.log(data.toString());
+        });
+
+        ffpmeg.stderr.on('data', (data) => {
+          console.log(data.toString());
+          progress.innerHTML += '<p>' + data.toString() + '</p>';
+          progress.scrollTop = progress.scrollHeight - progress.clientHeight;
+        });
+
+        ffpmeg.on('exit', (code) => {
+          console.log(`Child exited with code ${code}`);
+        });
+      }
+    }
+  }
+</script>
+</html>
