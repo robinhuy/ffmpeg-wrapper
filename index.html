@@ -14,9 +14,14 @@
 <h1>Convert video H264</h1>
 
 <h3>Choose MP4 files</h3>
-<input type="file" id="input-files" multiple onchange="handleFiles(this.files)">
+<input type="file" id="input-files" multiple onchange="chooseFiles(this.files)">
 
 <button type="button" id="btn-convert" onclick="convertH264()">Start</button>
+
+<video width="320" height="240" controls id="video-player">
+    <source id="video-source" src="" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 
 <div id="progress"></div>
 </body>
@@ -44,8 +49,10 @@
     }
   });
 
-  function handleFiles(files) {
+  function chooseFiles(files) {
     selectedFiles = files;
+
+    document.getElementById('video-source').setAttribute('src', files[0].path);
   }
 
   function convertH264() {
