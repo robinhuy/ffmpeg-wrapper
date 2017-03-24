@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Convert video H264</title>
-    <style>
-        #progress {
-            height: 200px;
-            overflow: scroll;
-        }
-    </style>
+    <link type="text/css" rel="stylesheet" href="style.css"/>
 </head>
 <body>
 <h1>Convert video H264</h1>
@@ -18,9 +13,11 @@
 
 <button type="button" id="btn-convert" onclick="convertH264()">Start</button>
 
-<video width="320" height="240" controls id="video-player">
+<div id="video-player">
+
+</div>
+<video width="320" height="240" controls>
     <source id="video-source" src="" type="video/mp4">
-    Your browser does not support the video tag.
 </video>
 
 <div id="progress"></div>
@@ -51,8 +48,6 @@
 
   function chooseFiles(files) {
     selectedFiles = files;
-
-    document.getElementById('video-source').setAttribute('src', files[0].path);
   }
 
   function convertH264() {
@@ -73,14 +68,11 @@
           });
 
           ffpmeg.stderr.on('data', (data) => {
-            console.log(data.toString());
             progress.innerHTML += '<p>' + data.toString() + '</p>';
             progress.scrollTop = progress.scrollHeight - progress.clientHeight;
           });
 
           ffpmeg.on('exit', (code) => {
-            console.log(`Child exited with code ${code}`);
-
             // todo: if app window lost focus
             if (true) {
               notifyDesktop('All the files was converted.');
