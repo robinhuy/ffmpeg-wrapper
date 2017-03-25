@@ -5,7 +5,8 @@
   "description": "Convert video H264 base on FFMPEG",
   "main": "main.js",
   "scripts": {
-    "start": "webpack && electron main.js"
+    "start": "webpack && electron main.js",
+    "build": "electron-packager --ignore app ."
   },
   "repository": "",
   "keywords": [

@@ -51,14 +51,14 @@
             if (fileExtension != '.mp4') {
               alert('Only support mp4 files');
             } else {
-              const ffpmeg = spawn('ffmpeg', ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true});
+              const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true});
 
-              ffpmeg.stdout.on('data', (data) => {
+              converting.stdout.on('data', (data) => {
                 console.log(data.toString());
               });
 
               // Display progress
-              ffpmeg.stderr.on('data', (data) => {
+              converting.stderr.on('data', (data) => {
                 this.progress += '<p>' + data.toString() + '</p>';
 
                 //todo: if user using scroll, do not scroll to bottom
@@ -67,7 +67,7 @@
                 progressElement.scrollTop = progressElement.scrollHeight - progressElement.clientHeight;
               });
 
-              ffpmeg.on('exit', (code) => {
+              converting.on('exit', (code) => {
                 // todo: if app window lost focus
                 if (true) {
                   notifyDesktop('All the files was converted.');

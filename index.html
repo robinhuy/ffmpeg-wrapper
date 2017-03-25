@@ -10,13 +10,16 @@
 <script>
   const {spawn, exec} = require('child_process');
   const path = require('path');
+  const ffmpeg = '"' + path.join(__dirname, 'lib/ffmpeg') + '"';
 
   window.$ = window.jQuery = require('jquery')
 
   document.addEventListener('DOMContentLoaded', function () {
     // Check FFMPEG was installed
-    exec('ffmpeg -version', (err, stdout, stderr) => {
+    exec(ffmpeg + ' -version', (err, stdout, stderr) => {
       if (err || stderr) {
+        console.log(err)
+        console.log(stderr)
         alert('Please install FFMPEG first!');
       }
     })
