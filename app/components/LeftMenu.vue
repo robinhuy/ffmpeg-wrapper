@@ -4,7 +4,10 @@
 
     <ul>
       <li>
-        <router-link to="/" exact>Convert Video</router-link>
+        <router-link to="/convert" exact>Convert Video</router-link>
+      </li>
+      <li>
+        <router-link to="/batch-convert" exact>Batch Convert Video</router-link>
       </li>
       <li>
         <router-link to="/cut" exact>Cut Video</router-link>
