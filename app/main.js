@@ -8,7 +8,7 @@ Vue.use(VueRouter)
 
 // Define routers
 const routes = [
-  { path: '/', component: ConvertVideo },
+  { path: '(/)?', component: ConvertVideo },
   { path: '/cut', component: CutVideo }
 ]
 

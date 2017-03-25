@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>Cut video</div>
+    <div>This feature will implement later</div>
   </div>
 </template>
 

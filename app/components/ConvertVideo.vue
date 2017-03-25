@@ -6,13 +6,7 @@
 
     <input type="file" id="input-files" multiple v-on:change="chooseFiles">
 
-    <button type="button" id="btn-convert" v-on:click="convertH264">Start</button>
-
-    <div id="video-player">
-      <video width="320" height="240" controls>
-        <source id="video-source" src="" type="video/mp4">
-      </video>
-    </div>
+    <button type="button" class="btn" :class="{ disabled: selectedFiles.length < 1 }" v-on:click="convertH264">Convert</button>
 
     <div id="progress" v-html="progress"></div>
   </div>
@@ -20,8 +14,13 @@
 
 <style scoped>
   #progress {
+      padding: 15px;
+      margin-top: 15px;
       height: 200px;
       overflow-y: scroll;
+      background-color: #000000;
+      color: #33B28C;
+      border: 1px solid rgba(0,0,0,.15);
   }
 </style>
 
@@ -43,39 +42,52 @@
 
         if (selectedFiles.length > 0) {
           for (let i = 0; i < selectedFiles.length; i++) {
-            let file = selectedFiles[i];
-            let fileExtension = path.extname(file.name);
-            let newFileName = path.basename(file.name, fileExtension) + '-h264' + fileExtension;
-            let newFilePath = path.dirname(file.path) + '/' + newFileName;
+            let file = selectedFiles[i]
+            let fileExtension = path.extname(file.name)
+            let newFileName = path.basename(file.name, fileExtension) + '-h264' + fileExtension
+            let newFilePath = path.dirname(file.path) + '/' + newFileName
 
             if (fileExtension != '.mp4') {
-              alert('Only support mp4 files');
+              alert('Only support mp4 files')
             } else {
-              const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true});
+              this.progress = '<p>Begin converting ...</p>'
+              this.scrollTop()
 
-              converting.stdout.on('data', (data) => {
-                console.log(data.toString());
-              });
+              // Begin convert after 1s
+              setTimeout(() => {
+                const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
 
-              // Display progress
-              converting.stderr.on('data', (data) => {
-                this.progress += '<p>' + data.toString() + '</p>';
+                // Display progress
+                converting.stderr.on('data', (data) => {
+                  this.progress += '<p>' + data.toString() + '</p>'
 
-                //todo: if user using scroll, do not scroll to bottom
-                // Scroll to bottom
-                let progressElement = document.getElementById('progress')
-                progressElement.scrollTop = progressElement.scrollHeight - progressElement.clientHeight;
-              });
+                  //todo: if user using scroll, do not scroll to bottom
+                  // Scroll to bottom
+                  this.scrollTop()
+                });
 
-              converting.on('exit', (code) => {
-                // todo: if app window lost focus
-                if (true) {
-                  notifyDesktop('All the files was converted.');
-                }
-              });
+                // Convert finished
+                converting.on('exit', (code) => {
+                  this.progress += '<p>Completed!</p>'
+                  this.scrollTop()
+
+                  // Reset input
+                  document.getElementById('input-files').value = null
+                  this.selectedFiles = []
+
+                  // Notify finish if the window is lost focus
+                  if (!remote.BrowserWindow.getFocusedWindow()) {
+                    notifyDesktop('FFMPEG WRAPPER', 'Finished converting!')
+                  }
+                });
+              }, 1000)
             }
           }
         }
+      },
+      scrollTop () {
+        let element = document.getElementById('progress')
+        element.scrollTop = element.scrollHeight - element.clientHeight
       }
     }
   }
