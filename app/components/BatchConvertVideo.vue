@@ -4,7 +4,7 @@
 
     <h3>Choose MP4 Files</h3>
 
-    <input type="file" id="input-files" multiple v-on:change="chooseFiles">
+    <input type="file" id="input-files" multiple v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
 
     <button type="button" class="btn" :class="{ disabled: selectedFiles.length < 1 }" v-on:click="convertH264">Export to folder</button>
 
@@ -51,44 +51,39 @@
               let file = selectedFiles[i]
               let newFilePath = saveFolder + '/' + file.name
 
-              if (path.extname(file.name) != '.mp4') {
-                this.progress = `<p style="color: red;">Cannot convert file ${file.name}</p>`
-                return;
-              } else {
-                this.progress = '<p>Begin converting ...</p>'
-                this.scrollTop()
+              this.progress = '<p>Begin converting ...</p>'
+              this.scrollTop()
 
-                // Begin convert after 1s
-                setTimeout(() => {
-                  const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
+              // Begin convert after 1s
+              setTimeout(() => {
+                const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
 
-                  // Display progress
-                  converting.stderr.on('data', (data) => {
-                    this.progress += '<p>' + data.toString() + '</p>'
+                // Display progress
+                converting.stderr.on('data', (data) => {
+                  this.progress += '<p>' + data.toString() + '</p>'
 
-                    //todo: if user using scroll, do not scroll to bottom
-                    // Scroll to bottom
-                    this.scrollTop()
-                  });
+                  //todo: if user using scroll, do not scroll to bottom
+                  // Scroll to bottom
+                  this.scrollTop()
+                });
 
-                  // Convert finished
-                  converting.on('exit', (code) => {
-                    this.progress += '<p>Completed!</p>'
-                    this.scrollTop()
+                // Convert finished
+                converting.on('exit', (code) => {
+                  this.progress += '<p>Completed!</p>'
+                  this.scrollTop()
 
-                    // Reset input
-                    document.getElementById('input-files').value = null
-                    this.selectedFiles = []
+                  // Reset input
+                  document.getElementById('input-files').value = null
+                  this.selectedFiles = []
 
-                    // Notify finish if the window is lost focus
-                    if (!remote.BrowserWindow.getFocusedWindow()) {
-                      notifyDesktop('FFMPEG WRAPPER', 'Convert completed!')
-                    } else {
-                      alert('Convert completed!')
-                    }
-                  });
-                }, 1000)
-              }
+                  // Notify finish if the window is lost focus
+                  if (!remote.BrowserWindow.getFocusedWindow()) {
+                    notifyDesktop('FFMPEG WRAPPER', 'Convert completed!')
+                  } else {
+                    alert('Convert completed!')
+                  }
+                });
+              }, 1000)
             }
           })
         }
