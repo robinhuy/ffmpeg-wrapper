@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>This feature will implement later</div>
+    <h1>This feature will implement later</h1>
   </div>
 </template>
 

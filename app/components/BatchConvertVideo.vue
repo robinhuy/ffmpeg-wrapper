@@ -6,7 +6,7 @@
 
     <input type="file" id="input-files" multiple v-on:change="chooseFiles">
 
-    <button type="button" class="btn" :class="{ disabled: selectedFiles.length < 1 }" v-on:click="convertH264">Convert</button>
+    <button type="button" class="btn" :class="{ disabled: selectedFiles.length < 1 }" v-on:click="convertH264">Export to folder</button>
 
     <div id="progress" v-html="progress"></div>
   </div>
@@ -26,7 +26,7 @@
 
 <script>
   export default{
-    name: 'cut-video',
+    name: 'batch-convert-video',
     data () {
       return {
         selectedFiles: [],
@@ -41,48 +41,56 @@
         let selectedFiles = this.selectedFiles
 
         if (selectedFiles.length > 0) {
-          for (let i = 0; i < selectedFiles.length; i++) {
-            let file = selectedFiles[i]
-            let fileExtension = path.extname(file.name)
-            let newFileName = path.basename(file.name, fileExtension) + '-h264' + fileExtension
-            let newFilePath = path.dirname(file.path) + '/' + newFileName
+          // Open dialog choose folder
+          remote.dialog.showOpenDialog({
+            properties: ['openDirectory']
+          }, saveFolder => {
+            if (!saveFolder) return
 
-            if (fileExtension != '.mp4') {
-              alert('Only support mp4 files')
-            } else {
-              this.progress = '<p>Begin converting ...</p>'
-              this.scrollTop()
+            for (let i = 0; i < selectedFiles.length; i++) {
+              let file = selectedFiles[i]
+              let newFilePath = saveFolder + '/' + file.name
 
-              // Begin convert after 1s
-              setTimeout(() => {
-                const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
+              if (path.extname(file.name) != '.mp4') {
+                this.progress = `<p style="color: red;">Cannot convert file ${file.name}</p>`
+                return;
+              } else {
+                this.progress = '<p>Begin converting ...</p>'
+                this.scrollTop()
 
-                // Display progress
-                converting.stderr.on('data', (data) => {
-                  this.progress += '<p>' + data.toString() + '</p>'
+                // Begin convert after 1s
+                setTimeout(() => {
+                  const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
 
-                  //todo: if user using scroll, do not scroll to bottom
-                  // Scroll to bottom
-                  this.scrollTop()
-                });
+                  // Display progress
+                  converting.stderr.on('data', (data) => {
+                    this.progress += '<p>' + data.toString() + '</p>'
 
-                // Convert finished
-                converting.on('exit', (code) => {
-                  this.progress += '<p>Completed!</p>'
-                  this.scrollTop()
+                    //todo: if user using scroll, do not scroll to bottom
+                    // Scroll to bottom
+                    this.scrollTop()
+                  });
 
-                  // Reset input
-                  document.getElementById('input-files').value = null
-                  this.selectedFiles = []
+                  // Convert finished
+                  converting.on('exit', (code) => {
+                    this.progress += '<p>Completed!</p>'
+                    this.scrollTop()
 
-                  // Notify finish if the window is lost focus
-                  if (!remote.BrowserWindow.getFocusedWindow()) {
-                    notifyDesktop('FFMPEG WRAPPER', 'Finished converting!')
-                  }
-                });
-              }, 1000)
+                    // Reset input
+                    document.getElementById('input-files').value = null
+                    this.selectedFiles = []
+
+                    // Notify finish if the window is lost focus
+                    if (!remote.BrowserWindow.getFocusedWindow()) {
+                      notifyDesktop('FFMPEG WRAPPER', 'Convert completed!')
+                    } else {
+                      alert('Convert completed!')
+                    }
+                  });
+                }, 1000)
+              }
             }
-          }
+          })
         }
       },
       scrollTop () {
