@@ -10,7 +10,7 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window
-  mainWindow = new BrowserWindow({icon: path.join(__dirname, 'app/assets/fw-icon.png'), width: 1024, height: 768})
+  mainWindow = new BrowserWindow({width: 1024, height: 768})
 
   // Load the index.html of the app
   mainWindow.loadURL(url.format({

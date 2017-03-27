@@ -6,7 +6,7 @@
 
     <input type="file" id="input-files" v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
 
-    <button type="button" class="btn" :class="{ disabled: selectedFiles.length < 1 }" v-on:click="convertH264">Export
+    <button type="button" class="btn" :class="{ disabled: selectedFiles.length < 1 || isConverting }" v-on:click="convertH264">Export
     </button>
 
     <div id="progress" v-html="progress"></div>
@@ -32,6 +32,7 @@
     data () {
       return {
         selectedFiles: [],
+        isConverting: false,
         progress: ''
       }
     },
@@ -58,6 +59,8 @@
           }, saveFile => {
             if (!saveFile) return
 
+            this.isConverting = true
+
             if (saveFile.indexOf(fileExtension) === -1) saveFile += fileExtension
 
             this.progress = '<p>Begin converting ...</p>'
@@ -82,6 +85,7 @@
               converting.on('exit', (code) => {
                 this.progress += '<p>Completed!</p>'
                 this.scrollTop()
+                this.isConverting = false
 
                 // Reset input
                 document.getElementById('input-files').value = null
