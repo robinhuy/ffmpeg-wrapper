@@ -41,9 +41,7 @@
     // Check FFMPEG was installed
     exec(ffmpeg + ' -version', (err, stdout, stderr) => {
       if (err || stderr) {
-        console.log(err)
-        console.log(stderr)
-        alert('Please install FFMPEG first!');
+        alert('Error! Cannot load FFMPEG library');
       }
     })
 
