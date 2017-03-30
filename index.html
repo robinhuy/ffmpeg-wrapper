@@ -16,6 +16,27 @@
 
   window.$ = window.jQuery = require('jquery')
 
+  const APP_SETTING = {
+    getData: function () {
+      if (typeof(Storage) !== "undefined") {
+        let data;
+
+        try {
+          data = JSON.parse(localStorage.getItem('setting')) || {};
+        } catch (e) {
+          data = {};
+        }
+
+        return data;
+      } else {
+        return {};
+      }
+    },
+    setData: function (data) {
+      localStorage.setItem('setting', JSON.stringify(data));
+    }
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
     // Check FFMPEG was installed
     exec(ffmpeg + ' -version', (err, stdout, stderr) => {

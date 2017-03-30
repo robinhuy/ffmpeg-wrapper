@@ -23,7 +23,6 @@
       color: #33B28C;
       border: 1px solid rgba(0,0,0,.15);
   }
-
 </style>
 
 <script>
