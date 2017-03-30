@@ -1,6 +1,8 @@
 <template>
   <div class="bg">
-    <div class="logo">FFMPEG WRAPPER</div>
+    <div class="logo">
+      <img alt="logo" src="logo.png"/>
+    </div>
 
     <ul>
       <li>
@@ -17,14 +19,19 @@
 </template>
 
 <style scoped>
-  .logo {
-    text-align: center;
-  }
-
   .bg {
     background-color: #373E43;
     color: #ffffff;
     height: 100%;
+  }
+
+  .logo {
+    text-align: center;
+    padding: 10px;
+  }
+
+  .logo img {
+    max-width: 50px;
   }
 
   ul {
@@ -34,7 +41,7 @@
 
   ul > li > a {
     display: block;
-    padding: 15px;
+    padding: 15px 30px;
     color: #ffffff;
   }
 
