@@ -55,7 +55,7 @@
 </style>
 
 <script>
-  export default{
+  export default {
     name: 'batch-convert-video',
     data () {
       return {

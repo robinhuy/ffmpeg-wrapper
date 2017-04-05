@@ -1,7 +1,9 @@
 <template>
   <div class="bg">
     <div class="logo">
-      <img alt="logo" src="logo.png"/>
+      <router-link to="/" exact>
+        <img alt="logo" src="logo.png"/>
+      </router-link>
     </div>
 
     <ul>
@@ -56,7 +58,7 @@
 </style>
 
 <script>
-  export default{
+  export default {
     name: 'left-menu'
   }
 </script>

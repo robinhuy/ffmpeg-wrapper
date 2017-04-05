@@ -4,6 +4,7 @@ import App from './App.vue'
 import ConvertVideo from './components/ConvertVideo.vue'
 import BatchConvertVideo from './components/BatchConvertVideo.vue'
 import CutVideo from './components/CutVideo.vue'
+import Home from './components/Home.vue'
 
 Vue.use(VueRouter)
 
@@ -11,7 +12,8 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/convert', component: ConvertVideo },
   { path: '/batch-convert', component: BatchConvertVideo },
-  { path: '/cut', component: CutVideo }
+  { path: '/cut', component: CutVideo },
+  { path: '*', component: Home }
 ]
 
 let router = new VueRouter({

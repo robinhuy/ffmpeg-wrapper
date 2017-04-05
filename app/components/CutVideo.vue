@@ -9,7 +9,7 @@
 </style>
 
 <script>
-    export default{
+    export default {
         name: 'cut-video'
     }
 </script>
