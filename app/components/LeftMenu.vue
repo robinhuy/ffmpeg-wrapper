@@ -37,6 +37,7 @@
   ul {
     padding: 0;
     list-style-type: none;
+    text-align: center;
   }
 
   ul > li > a {
@@ -45,8 +46,12 @@
     color: #ffffff;
   }
 
-  ul > li > a:hover {
-    color: #f5deb3;
+  ul > li > a:not(.router-link-active):hover {
+    color: #84e5f7;
+  }
+
+  ul > li > a.router-link-active {
+    background-color: rgba(90,200,230,0.7);
   }
 </style>
 

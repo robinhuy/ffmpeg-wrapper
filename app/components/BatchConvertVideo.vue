@@ -66,11 +66,29 @@
         suffix: '-h264'
       }
     },
+    mounted () {
+      // Set default setting values
+      let settings = APP_SETTING.getData()
+
+      this.prefix = settings.file_convert_prefix || ''
+
+      if (settings.file_convert_suffix === undefined) {
+        this.suffix = '-h264'
+      } else {
+        this.suffix = settings.file_convert_suffix || ''
+      }
+    },
     methods: {
       chooseFiles (e) {
         this.selectedFiles = e.target.files
       },
       convertH264 () {
+        // Save setting
+        let settings = APP_SETTING.getData()
+        settings.file_convert_prefix = this.prefix || ''
+        settings.file_convert_suffix = this.suffix || ''
+        APP_SETTING.setData(settings)
+
         let selectedFiles = this.selectedFiles
 
         if (selectedFiles.length > 0) {

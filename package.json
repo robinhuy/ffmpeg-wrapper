@@ -1,13 +1,14 @@
 {
-  "name": "convert-video-h264",
-  "productName": "Convert video H264",
+  "name": "ffmpeg-wrapper",
+  "productName": "FFMPEG Wrapper",
   "version": "1.0.0",
-  "description": "Convert video H264 base on FFMPEG",
+  "description": "FFMPEG UI",
   "main": "main.js",
   "scripts": {
     "start": "webpack && electron main.js",
-    "mac": "electron-packager --icon logo.png.icns --ignore ffmpeg-windows --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
-    "win": "electron-packager --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js ."
+    "mac": "electron-packager --icon logo.png.icns --ignore ffmpeg-windows --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
+    "win": "electron-packager --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
+    "linux": "electron-packager --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-windows --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js ."
   },
   "repository": "",
   "keywords": [
