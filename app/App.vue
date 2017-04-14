@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-on:dragover.stop.prevent v-on:drop.stop.prevent style="height: 100%;">
     <div id="left-menu">
       <left-menu></left-menu>
     </div>
@@ -17,6 +17,10 @@
 <style>
   * {
     box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
   }
 
   body {
