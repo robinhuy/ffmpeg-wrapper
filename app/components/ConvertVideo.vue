@@ -1,35 +1,34 @@
 <template>
   <div>
-    <h1>Convert Video H264</h1>
+      <h1>Convert Video H264</h1>
 
-    <h3>Choose Files</h3>
+      <h3>Choose Files</h3>
 
-    <div id="upload-zone"
-         :class="{hover: isDragOver}"
-         v-on:click="uploadFiles"
-         v-on:dragover.stop.prevent="dragFiles"
-         v-on:dragleave.stop.prevent="dragLeave"
-         v-on:drop.stop.prevent="dropFiles">
-        <div class="message">{{ selectedFileName }}</div>
-    </div>
-
-    <input type="file" id="input-files" v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
-
-    <button type="button"
-            class="btn"
-            :class="{disabled: selectedFile === null || isConverting}"
-            v-on:click="convertH264">Export
-    </button>
-
-    <div v-if="progress.length > 0">
-      <div v-on:click="toggleViewLog">
-          <a href="#" v-if="showLog">Hide</a>
-          <a href="#" v-else>View log</a>
+      <div id="upload-zone"
+           :class="{hover: isDragOver}"
+           v-on:click="uploadFiles"
+           v-on:dragover.stop.prevent="dragFiles"
+           v-on:dragleave.stop.prevent="dragLeave"
+           v-on:drop.stop.prevent="dropFiles">
+          <div class="message">{{ selectedFileName }}</div>
       </div>
 
-      <div id="progress" v-html="progress" v-show="showLog" v-on:scroll="userScroll"></div>
-    </div>
+      <input type="file" id="input-files" v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
 
+      <button type="button"
+              class="btn"
+              :class="{disabled: selectedFile === null || isConverting}"
+              v-on:click="convertH264">Export
+      </button>
+
+      <div v-if="progress.length > 0">
+          <div v-on:click="toggleViewLog" style="float: right;">
+              <a href="#" v-if="showLog">Hide</a>
+              <a href="#" v-else>View log</a>
+          </div>
+
+          <div id="progress" v-html="progress" v-show="showLog" v-on:scroll="userScroll"></div>
+      </div>
   </div>
 </template>
 
@@ -126,36 +125,49 @@
             this.scrollToBottom()
             this.stopScroll = false
 
-            // Begin convert after 1s
-            setTimeout(() => {
-              const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${saveFile}"`, '-y'], {shell: true})
+            // Check video duration
+            exec(`ffmpeg -i ${file.path} 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
+              if (!error) {
+                const duration = +stdout
+                const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${saveFile}"`, '-y'], {shell: true})
 
-              // Display progress
-              converting.stderr.on('data', (data) => {
-                this.progress += '<p>' + data.toString() + '</p>'
+                // Display progress
+                converting.stderr.on('data', (data) => {
+                  data = data.toString()
+                  this.progress += '<p>' + data + '</p>'
 
-                // Scroll to bottom if user does not stop
-                if (!this.stopScroll) this.scrollToBottom()
-              });
+                  let current = data.match(/time=([0-9:.])*\s/) || ['']
+                  current = current[0].trim().split('=')[1] || '0:0:0'
+                  current = current.split(':')
+                  current = 3600 * current[0] + 60 * current[1] + +current[2]
+                  current = current / duration * 100
+                  // todo: use progressbar
 
-              // Convert finished
-              converting.on('exit', (code) => {
-                this.progress += '<p>Completed!</p>'
-                this.scrollToBottom()
-                this.isConverting = false
+                  // Scroll to bottom if user does not stop
+                  if (!this.stopScroll) this.scrollToBottom()
+                });
 
-                // Reset input
-                document.getElementById('input-files').value = null
-                this.selectedFile = null
+                // Convert finished
+                converting.on('exit', (code) => {
+                  this.progress += '<p>Completed!</p>'
+                  this.scrollToBottom()
+                  this.isConverting = false
 
-                // Notify finish if the window is lost focus
-                  if (!remote.BrowserWindow.getFocusedWindow()) {
-                    notifyDesktop('FFMPEG WRAPPER', 'Convert completed!')
-                  } else {
-                    alert('Convert completed!')
-                  }
-              });
-            }, 1000)
+                  // Reset input
+                  document.getElementById('input-files').value = null
+                  this.selectedFile = null
+
+                  // Notify finish if the window is lost focus
+                    if (!remote.BrowserWindow.getFocusedWindow()) {
+                      notifyDesktop('FFMPEG WRAPPER', 'Convert completed!')
+                    } else {
+                      alert('Convert completed!')
+                    }
+                });
+              } else {
+                this.progress += `<p>${error}</p><p>${stderr}</p>`
+              }
+            });
           })
         }
       },
