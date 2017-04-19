@@ -49,11 +49,11 @@
   }
 
   ul > li > a:not(.router-link-active):hover {
-    color: #84e5f7;
+    color: #2dbefb;
   }
 
   ul > li > a.router-link-active {
-    background-color: rgba(90,200,230,0.7);
+    background-color: #2dbefb;
   }
 </style>
 

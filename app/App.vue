@@ -36,13 +36,17 @@
     outline: none;
   }
 
+  .center {
+    text-align: center;
+  }
+
   .btn {
     padding: 6px 12px;
     text-align: center;
     transition: all 50ms;
-    background-color: #00a65a;
     color: #ffffff;
-    border: 1px solid #008d4c;
+    background-color: #2dbefb;
+    border: 1px solid #2dbefb;
     border-radius: 3px;
     text-shadow: none;
     box-shadow: none;
@@ -54,16 +58,22 @@
   }
 
   .btn:hover {
-    background-color: #449d44;
-    border-color: #398439;
+    background-color: #03a9f4;
+    border-color: #03a9f4;
   }
 
   .btn.disabled {
-    background-color: #5cb85c;
-    border-color: #4cae4c;
+    background-color: #373e43;
+    border-color: #373e43;
     cursor: not-allowed;
     box-shadow: none;
     opacity: 0.65;
+  }
+
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   #left-menu {

@@ -4,22 +4,26 @@
 
       <h3>Choose Files</h3>
 
-      <div id="upload-zone"
+      <div id="upload-zone" class="center"
            :class="{hover: isDragOver}"
            v-on:click="uploadFiles"
            v-on:dragover.stop.prevent="dragFiles"
            v-on:dragleave.stop.prevent="dragLeave"
            v-on:drop.stop.prevent="dropFiles">
+          <img :src="imgSource" v-on:mouseover="mouseOverImage" v-on:mouseout="mouseOutImage"/>
+          <div class="message-title">Select file to convert</div>
           <div class="message">{{ selectedFileName }}</div>
       </div>
 
       <input type="file" id="input-files" v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
 
-      <button type="button"
-              class="btn"
-              :class="{disabled: selectedFile === null || isConverting}"
-              v-on:click="convertH264">Export
-      </button>
+      <div class="center">
+          <button type="button"
+                  class="btn btn-export"
+                  :class="{disabled: selectedFile === null || isConverting}"
+                  v-on:click="convertH264">Export
+          </button>
+      </div>
 
       <div v-if="progress.length > 0">
           <div v-on:click="toggleViewLog" style="float: right;">
@@ -34,34 +38,49 @@
 
 <style scoped>
   #upload-zone {
-      height: 200px;
-      border: 2px dashed #4f9eb5;
-      border-radius: 5px;
-      cursor: pointer;
+    height: 250px;
+    border: 2px dashed #4f9eb5;
+    border-radius: 5px;
+    cursor: pointer;
   }
 
   #upload-zone.hover {
-      background-color: grey;
+    background-color: grey;
+  }
+
+  #upload-zone img {
+    width: 100px;
+    margin-top: 30px;
+  }
+
+  #upload-zone .message-title {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: bold;
   }
 
   #upload-zone .message {
-      margin-top: 80px;
-      text-align: center;
-      font-size: 24px;
+    margin-top: 20px;
+    font-size: 18px;
   }
 
   #input-files {
-      display: none;
+    display: none;
+  }
+
+  .btn-export {
+    margin: 15px;
+    font-size: 20px;
   }
 
   #progress {
-      padding: 15px;
-      margin-top: 15px;
-      height: 200px;
-      overflow-y: scroll;
-      background-color: #000000;
-      color: #33B28C;
-      border: 1px solid rgba(0,0,0,.15);
+    padding: 15px;
+    margin-top: 15px;
+    height: 200px;
+    overflow-y: scroll;
+    background-color: #000000;
+    color: #33B28C;
+    border: 1px solid rgba(0,0,0,.15);
   }
 </style>
 
@@ -70,8 +89,9 @@
     name: 'convert-video',
     data () {
       return {
+        imgSource: imgPath + '/choose-files.png',
         selectedFile: null,
-        selectedFileName: 'Drop files here or click to choose',
+        selectedFileName: 'Or drag and drop video file',
         isDragOver: false,
         isConverting: false,
         showLog: false,
@@ -80,6 +100,12 @@
       }
     },
     methods: {
+      mouseOverImage () {
+        this.imgSource = imgPath + '/choose-files-hover.png'
+      },
+      mouseOutImage () {
+        this.imgSource = imgPath + '/choose-files.png'
+      },
       uploadFiles () {
         document.getElementById('input-files').click();
       },

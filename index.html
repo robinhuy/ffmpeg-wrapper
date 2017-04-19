@@ -11,6 +11,7 @@
   const {remote} = require('electron');
   const {spawn, exec} = require('child_process');
   const path = require('path');
+  const imgPath = path.join(__dirname, 'img');
   const ffmpeg = '"' + path.join(__dirname, 'ffmpeg-mac/ffmpeg') + '"';
 //  const ffmpeg = '"' + path.join(__dirname, 'ffmpeg-linux/ffmpeg') + '"';
 //  const ffmpeg = ('"' + path.join(__dirname, 'ffmpeg-windows/ffmpeg') + '"').replace(/\//g, '\\');
