@@ -23,15 +23,21 @@
                   :class="{disabled: selectedFile === null || isConverting}"
                   v-on:click="convertH264">Export
           </button>
+
+          <div class="progress">
+              <div class="progress-bar" :style="'width: ' + progressPercent + '%'">
+                  <span class="sr-only">{{ progressPercent }} %</span>
+              </div>
+          </div>
       </div>
 
-      <div v-if="progress.length > 0">
+      <div v-if="logs.length > 0">
           <div v-on:click="toggleViewLog" style="float: right;">
               <a href="#" v-if="showLog">Hide</a>
               <a href="#" v-else>View log</a>
           </div>
 
-          <div id="progress" v-html="progress" v-show="showLog" v-on:scroll="userScroll"></div>
+          <div id="logs" v-html="logs" v-show="showLog" v-on:scroll="userScroll"></div>
       </div>
   </div>
 </template>
@@ -73,7 +79,7 @@
     font-size: 20px;
   }
 
-  #progress {
+  #logs {
     padding: 15px;
     margin-top: 15px;
     height: 200px;
@@ -95,7 +101,8 @@
         isDragOver: false,
         isConverting: false,
         showLog: false,
-        progress: '',
+        logs: '',
+        progressPercent: 0,
         stopScroll: false
       }
     },
@@ -145,9 +152,11 @@
 
             this.isConverting = true
 
+            // Add extension if user forget
             if (saveFile.indexOf(fileExtension) === -1) saveFile += fileExtension
 
-            this.progress = '<p>Begin converting ...</p>'
+            // Begin write logs
+            this.logs = '<p>Begin converting ...</p>'
             this.scrollToBottom()
             this.stopScroll = false
 
@@ -157,17 +166,17 @@
                 const duration = +stdout
                 const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${saveFile}"`, '-y'], {shell: true})
 
-                // Display progress
+                // Display logs when converting
                 converting.stderr.on('data', (data) => {
                   data = data.toString()
-                  this.progress += '<p>' + data + '</p>'
+                  this.logs += '<p>' + data + '</p>'
 
                   let current = data.match(/time=([0-9:.])*\s/) || ['']
                   current = current[0].trim().split('=')[1] || '0:0:0'
                   current = current.split(':')
                   current = 3600 * current[0] + 60 * current[1] + +current[2]
                   current = current / duration * 100
-                  // todo: use progressbar
+                  this.progressPercent = Math.round(current)
 
                   // Scroll to bottom if user does not stop
                   if (!this.stopScroll) this.scrollToBottom()
@@ -175,7 +184,7 @@
 
                 // Convert finished
                 converting.on('exit', (code) => {
-                  this.progress += '<p>Completed!</p>'
+                  this.logs += '<p>Completed!</p>'
                   this.scrollToBottom()
                   this.isConverting = false
 
@@ -191,7 +200,7 @@
                     }
                 });
               } else {
-                this.progress += `<p>${error}</p><p>${stderr}</p>`
+                this.logs += `<p>${error}</p><p>${stderr}</p>`
               }
             });
           })
