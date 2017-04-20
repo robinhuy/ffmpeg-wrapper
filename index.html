@@ -12,11 +12,12 @@
   const {spawn, exec} = require('child_process');
   const path = require('path');
   const imgPath = path.join(__dirname, 'img');
-  const ffmpeg = '"' + path.join(__dirname, 'ffmpeg-mac/ffmpeg') + '"';
-//  const ffmpeg = '"' + path.join(__dirname, 'ffmpeg-linux/ffmpeg') + '"';
-//  const ffmpeg = ('"' + path.join(__dirname, 'ffmpeg-windows/ffmpeg') + '"').replace(/\//g, '\\');
+
+  let ffmpeg = '"' + path.join(__dirname, `ffmpeg-${process.env.OS}/ffmpeg`) + '"';
+  if (process.env.OS === 'windows') ffmpeg = ffmpeg.replace(/\//g, '\\');
 
   window.$ = window.jQuery = require('jquery')
+  console.log(process.env.ELECTRON_ENABLE_LOGGING, 'a')
 
   const APP_SETTING = {
     getData: function () {
