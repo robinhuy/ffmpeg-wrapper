@@ -29,7 +29,7 @@
 
   .logo {
     text-align: center;
-    padding: 10px;
+    padding: 20px 10px 10px 10px;
   }
 
   .logo img {
@@ -37,6 +37,7 @@
   }
 
   ul {
+    margin-top: 10px;
     padding: 0;
     list-style-type: none;
     text-align: center;

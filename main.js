@@ -1,6 +1,5 @@
 const electron = require('electron')
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
+const {app, BrowserWindow} = electron
 
 const path = require('path')
 const url = require('url')
@@ -26,7 +25,8 @@ function createWindow () {
   })
 
   // Open the DevTools
-  mainWindow.webContents.openDevTools({mode: 'detach'})
+  if (!process.env.OS)
+    mainWindow.webContents.openDevTools({mode: 'detach'})
 }
 
 // When Electron has finished initialization and is ready to create browser windows
