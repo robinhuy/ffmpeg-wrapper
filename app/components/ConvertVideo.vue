@@ -9,8 +9,10 @@
            v-on:click="uploadFiles"
            v-on:dragover.stop.prevent="dragFiles"
            v-on:dragleave.stop.prevent="dragLeave"
-           v-on:drop.stop.prevent="dropFiles">
-          <img :src="imgSource" v-on:mouseover="mouseOverImage" v-on:mouseout="mouseOutImage"/>
+           v-on:drop.stop.prevent="dropFiles"
+           v-on:mouseover="mouseOverImage"
+           v-on:mouseout="mouseOutImage">
+          <img :src="imgSource"/>
           <div class="message-title">Select file to convert</div>
           <div class="message">{{ selectedFileName }}</div>
       </div>
@@ -48,6 +50,7 @@
     border: 2px dashed #4f9eb5;
     border-radius: 5px;
     cursor: pointer;
+    color: #616161;
   }
 
   #upload-zone.hover {
@@ -68,6 +71,10 @@
   #upload-zone .message {
     margin-top: 20px;
     font-size: 18px;
+  }
+
+  #upload-zone:hover {
+    color: #000000;
   }
 
   #input-files {

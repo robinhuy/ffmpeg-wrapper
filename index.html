@@ -13,11 +13,11 @@
   const path = require('path');
   const imgPath = path.join(__dirname, 'img');
 
-  let ffmpeg = '"' + path.join(__dirname, `ffmpeg-${process.env.OS}/ffmpeg`) + '"';
-  if (process.env.OS === 'windows') ffmpeg = ffmpeg.replace(/\//g, '\\');
+  let OS = process.env.OS || 'mac';
+  let ffmpeg = '"' + path.join(__dirname, `ffmpeg-${OS}/ffmpeg`) + '"';
+  if (OS === 'windows') ffmpeg = ffmpeg.replace(/\//g, '\\');
 
   window.$ = window.jQuery = require('jquery')
-  console.log(process.env.ELECTRON_ENABLE_LOGGING, 'a')
 
   const APP_SETTING = {
     getData: function () {
