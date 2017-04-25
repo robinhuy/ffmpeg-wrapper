@@ -10,6 +10,6 @@
 
 <script>
     export default {
-        name: 'split-video-audio'
+        name: 'split'
     }
 </script>

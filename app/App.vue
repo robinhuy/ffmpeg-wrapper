@@ -26,6 +26,7 @@
   body {
     margin: 0;
     padding: 0;
+    background-color: #373E43;
   }
 
   a {
@@ -34,6 +35,10 @@
 
   a:focus {
     outline: none;
+  }
+
+  label {
+    cursor: pointer;
   }
 
   .center {
@@ -118,12 +123,13 @@
     top: 0;
     left: 0;
     width: 200px;
-    height: 100%;
   }
 
   #main-content {
     margin-left: 200px;
     padding: 15px;
+    background-color: #ffffff;
+    height: 100%;
   }
 </style>
 

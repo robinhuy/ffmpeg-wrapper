@@ -1,8 +1,15 @@
 <template>
   <div>
-      <h1>Convert Video H264</h1>
+      <h1>Compress Video</h1>
 
-      <h3>Choose Files</h3>
+      <label>
+          <input type="checkbox" /> Replace original files
+      </label>
+
+      <label>
+          File Convert Prefix
+          <input type="text" id="prefix" v-model="prefix"/>
+      </label>
 
       <div id="upload-zone" class="center"
            :class="{hover: isDragOver}"
@@ -13,11 +20,11 @@
            v-on:mouseover="mouseOverImage"
            v-on:mouseout="mouseOutImage">
           <img :src="imgSource"/>
-          <div class="message-title">Select file to convert</div>
+          <div class="message-title">Select file to compress</div>
           <div class="message">{{ selectedFileName }}</div>
       </div>
 
-      <input type="file" id="input-files" v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
+      <input type="file" id="input-files" multiple v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
 
       <div class="center">
           <button type="button"
@@ -99,9 +106,10 @@
 
 <script>
   export default {
-    name: 'convert-video',
+    name: 'compress',
     data () {
       return {
+        prefix: 'convert-',
         imgSource: imgPath + '/choose-files.png',
         selectedFile: null,
         selectedFileName: 'Or drag and drop video file',
@@ -131,15 +139,30 @@
         this.isDragOver = false
       },
       dropFiles (e) {
-        this.selectedFile = e.dataTransfer.files[0]
-        this.selectedFileName = this.selectedFile.name
+        this.selectedFile = e.dataTransfer.files
+
+        if (this.selectedFile.length === 1)
+          this.selectedFileName = this.selectedFile[0].name
+        else
+          this.selectedFileName = this.selectedFile.length + ' files'
+
         this.isDragOver = false
       },
       chooseFiles (e) {
-        this.selectedFile = e.target.files[0]
-        this.selectedFileName = 'Selected files: ' + this.selectedFile.name
+        this.selectedFile = e.target.files
+
+        if (this.selectedFile.length === 1)
+          this.selectedFileName = this.selectedFile[0].name
+        else
+          this.selectedFileName = this.selectedFile.length + ' files'
       },
       convertH264 () {
+        // Save setting
+        let settings = APP_SETTING.getData()
+        settings.file_convert_prefix = this.prefix || ''
+        settings.file_convert_suffix = this.suffix || ''
+        APP_SETTING.setData(settings)
+
         let file = this.selectedFile
 
         if (file) {

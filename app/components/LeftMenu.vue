@@ -8,13 +8,13 @@
 
     <ul>
       <li>
-        <router-link to="/convert" exact>Convert Video</router-link>
+        <router-link to="/compress" exact>Compress Video</router-link>
       </li>
       <li>
-        <router-link to="/batch-convert" exact>Batch Convert Video</router-link>
+        <router-link to="/cut" exact>Cut Video/Audio</router-link>
       </li>
       <li>
-        <router-link to="/cut" exact>Cut Video</router-link>
+        <router-link to="/split" exact>Split Video/Audio</router-link>
       </li>
     </ul>
   </div>
@@ -22,9 +22,7 @@
 
 <style scoped>
   .bg {
-    background-color: #373E43;
     color: #ffffff;
-    height: 100%;
   }
 
   .logo {

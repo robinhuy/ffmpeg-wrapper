@@ -56,7 +56,7 @@
 
 <script>
   export default {
-    name: 'batch-convert-video',
+    name: 'cut',
     data () {
       return {
         selectedFiles: [],

@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App.vue'
-import ConvertVideo from './components/ConvertVideo.vue'
-import BatchConvertVideo from './components/BatchConvertVideo.vue'
-import CutVideo from './components/CutVideo.vue'
+import Compress from './components/Compress.vue'
+import Cut from './components/Cut.vue'
+import Split from './components/Split.vue'
 import Home from './components/Home.vue'
 
 Vue.use(VueRouter)
 
 // Define routers
 const routes = [
-  { path: '/convert', component: ConvertVideo },
-  { path: '/batch-convert', component: BatchConvertVideo },
-  { path: '/cut', component: CutVideo },
+  { path: '/compress', component: Compress },
+  { path: '/cut', component: Cut },
+  { path: '/split', component: Split },
   { path: '*', component: Home }
 ]
 
