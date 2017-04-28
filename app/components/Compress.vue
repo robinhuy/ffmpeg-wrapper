@@ -3,12 +3,12 @@
       <h1>Compress Video</h1>
 
       <label>
-          <input type="checkbox" /> Replace original files
+          <input type="checkbox" v-model="override_mode"/> Replace original files
       </label>
 
-      <label>
+      <label v-if="!override_mode">
           File Convert Prefix
-          <input type="text" id="prefix" v-model="prefix"/>
+          <input type="text" id="setting-prefix" v-model="prefix"/>
       </label>
 
       <div id="upload-zone" class="center"
@@ -21,33 +21,40 @@
            v-on:mouseout="mouseOutImage">
           <img :src="imgSource"/>
           <div class="message-title">Select file to compress</div>
-          <div class="message">{{ selectedFileName }}</div>
+          <div class="message">Or drag and drop video file</div>
       </div>
 
-      <input type="file" id="input-files" multiple v-on:change="chooseFiles" accept=".mp4,.flv,.MP4,.FLV">
+      <input type="file" id="input-files" multiple v-on:change="chooseFiles" :accept="this.allowed.join(',')">
 
       <div class="center">
           <button type="button"
                   class="btn btn-export"
-                  :class="{disabled: selectedFile === null || isConverting}"
-                  v-on:click="convertH264">Export
+                  :class="{disabled: selectedFiles.length === 0}"
+                  v-on:click="compressAll">Compress all
           </button>
 
-          <div class="progress">
-              <div class="progress-bar" :style="'width: ' + progressPercent + '%'">
-                  <span class="sr-only">{{ progressPercent }} %</span>
-              </div>
-          </div>
+          <ul>
+              <li v-for="f in selectedFiles">
+                  <span>{{ f.name }}</span>
+                  <div class="progress">
+                      <div class="progress-bar" :style="'width: ' + f.progressPercent + '%'">
+                          <span class="sr-only">{{ f.progressPercent }} %</span>
+                      </div>
+                  </div>
+                  <button type="button">Compress</button>
+                  <button type="button">Pause</button>
+              </li>
+          </ul>
       </div>
 
-      <div v-if="logs.length > 0">
-          <div v-on:click="toggleViewLog" style="float: right;">
-              <a href="#" v-if="showLog">Hide</a>
-              <a href="#" v-else>View log</a>
-          </div>
+      <!--<div v-if="logs.length > 0">-->
+          <!--<div v-on:click="toggleViewLog" style="float: right;">-->
+              <!--<a href="#" v-if="showLog">Hide</a>-->
+              <!--<a href="#" v-else>View log</a>-->
+          <!--</div>-->
 
-          <div id="logs" v-html="logs" v-show="showLog" v-on:scroll="userScroll"></div>
-      </div>
+          <!--<div id="logs" v-html="logs" v-show="showLog" v-on:scroll="userScroll"></div>-->
+      <!--</div>-->
   </div>
 </template>
 
@@ -109,15 +116,14 @@
     name: 'compress',
     data () {
       return {
+        allowed: ['.mp4', '.flv' , '.MP4' , '.FLV'],
+        override_mode: false,
         prefix: 'convert-',
         imgSource: imgPath + '/choose-files.png',
-        selectedFile: null,
-        selectedFileName: 'Or drag and drop video file',
+        selectedFiles: [],
         isDragOver: false,
-        isConverting: false,
         showLog: false,
         logs: '',
-        progressPercent: 0,
         stopScroll: false
       }
     },
@@ -139,101 +145,105 @@
         this.isDragOver = false
       },
       dropFiles (e) {
-        this.selectedFile = e.dataTransfer.files
-
-        if (this.selectedFile.length === 1)
-          this.selectedFileName = this.selectedFile[0].name
-        else
-          this.selectedFileName = this.selectedFile.length + ' files'
-
+        this.mergeUploadFiles(e.dataTransfer.files)
         this.isDragOver = false
       },
       chooseFiles (e) {
-        this.selectedFile = e.target.files
-
-        if (this.selectedFile.length === 1)
-          this.selectedFileName = this.selectedFile[0].name
-        else
-          this.selectedFileName = this.selectedFile.length + ' files'
+        this.mergeUploadFiles(e.target.files)
       },
-      convertH264 () {
+      mergeUploadFiles (files) {
+        // Convert Object to Array
+        let arr = Object.keys(files).map(key => { return files[key] })
+        let arrLength = arr.length
+
+        for (let i = 0; i < arrLength; i++) {
+          // Check file already exist
+          let exist = this.selectedFiles.find(selected => {
+            return selected.path === arr[i].path;
+          })
+
+          // Push allowed file which is not exist
+          let extName = path.extname(arr[i].name)
+          if (exist === undefined && this.allowed.indexOf(extName) !== -1) {
+            this.selectedFiles.push(arr[i])
+          }
+        }
+      },
+      compressAll () {
+        // Alert when not in override mode but setting prefix is empty
+        if (!override_mode && document.getElementById('setting-prefix').value.trim() === '') {
+          let prefix = confirm('Do you want to left file prefix blank? (It will cause converted files replace the original files');
+          if (!prefix) return false
+        }
+
         // Save setting
         let settings = APP_SETTING.getData()
         settings.file_convert_prefix = this.prefix || ''
-        settings.file_convert_suffix = this.suffix || ''
         APP_SETTING.setData(settings)
 
-        let file = this.selectedFile
+        // Compress files which not converting
+        let numberFiles = this.selectedFiles.length
+        if (numberFiles > 0) {
+          for (let i = 0; i < numberFiles; i++) {
+            let file = this.selectedFiles[i]
+            if (!file.isConverting) {
+              // todo: Check file exists then alert to prevent override
 
-        if (file) {
-          let fileExtension = path.extname(file.name)
-          let newFileName = path.basename(file.name, fileExtension) + '-h264' + fileExtension
-          let newFilePath = path.dirname(file.path) + '/' + newFileName
+              let newFileName = settings.file_convert_prefix + file.name
+              let newFilePath = path.dirname(file.path) + '/' + newFileName
 
-          // Open dialog to save file
-          remote.dialog.showSaveDialog({
-            defaultPath: newFilePath,
-            filters: [{
-              name: 'video',
-              extensions: fileExtension.substr(1)
-            }]
-          }, saveFile => {
-            if (!saveFile) return
+              this.selectedFiles[i].isConverting = true
 
-            this.isConverting = true
+              // Check video duration
+              exec(`ffmpeg -i ${file.path} 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
+                if (!error) {
+                  const duration = +stdout
 
-            // Add extension if user forget
-            if (saveFile.indexOf(fileExtension) === -1) saveFile += fileExtension
+                  // Convert video h264
+                  const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
 
-            // Begin write logs
-            this.logs = '<p>Begin converting ...</p>'
-            this.scrollToBottom()
-            this.stopScroll = false
+                  // Display progress when converting
+                  converting.stderr.on('data', (data) => {
+                    data = data.toString()
+                    console.log(data)
+//                    this.logs += '<p>' + data + '</p>'
 
-            // Check video duration
-            exec(`ffmpeg -i ${file.path} 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
-              if (!error) {
-                const duration = +stdout
-                const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${saveFile}"`, '-y'], {shell: true})
+                    let current = data.match(/time=([0-9:.])*\s/) || ['']
+                    current = current[0].trim().split('=')[1] || '0:0:0'
+                    current = current.split(':')
+                    current = 3600 * current[0] + 60 * current[1] + +current[2]
+                    current = current / duration * 100
+                    this.selectedFiles[i].progressPercent = Math.round(current)
 
-                // Display logs when converting
-                converting.stderr.on('data', (data) => {
-                  data = data.toString()
-                  this.logs += '<p>' + data + '</p>'
+                    // Scroll to bottom if user does not stop
+//                    if (!this.stopScroll) this.scrollToBottom()
+                  });
 
-                  let current = data.match(/time=([0-9:.])*\s/) || ['']
-                  current = current[0].trim().split('=')[1] || '0:0:0'
-                  current = current.split(':')
-                  current = 3600 * current[0] + 60 * current[1] + +current[2]
-                  current = current / duration * 100
-                  this.progressPercent = Math.round(current)
+                  // Convert finished
+                  converting.on('exit', (code) => {
+//                  this.logs += '<p>Completed!</p>'
+//                  this.scrollToBottom()
+                    this.selectedFiles[i].isConverting = false
 
-                  // Scroll to bottom if user does not stop
-                  if (!this.stopScroll) this.scrollToBottom()
-                });
+                    // Reset input
+//                    document.getElementById('input-files').value = null
+//                    this.selectedFiles = []
 
-                // Convert finished
-                converting.on('exit', (code) => {
-                  this.logs += '<p>Completed!</p>'
-                  this.scrollToBottom()
-                  this.isConverting = false
-
-                  // Reset input
-                  document.getElementById('input-files').value = null
-                  this.selectedFile = null
-
-                  // Notify finish if the window is lost focus
+                    // Notify finish if the window is lost focus
                     if (!remote.BrowserWindow.getFocusedWindow()) {
                       notifyDesktop('FFMPEG WRAPPER', 'Convert completed!')
                     } else {
-                      alert('Convert completed!')
+                      alert(`Convert ${newFileName} completed!`)
                     }
-                });
-              } else {
-                this.logs += `<p>${error}</p><p>${stderr}</p>`
+                  });
+                }
+              else {
+                  console.log(error, stderr)
+//                this.logs += `<p>${error}</p><p>${stderr}</p>`
               }
-            });
-          })
+              });
+            }
+          }
         }
       },
       toggleViewLog () {
@@ -245,7 +255,7 @@
       },
       userScroll () {
         let element = document.getElementById('progress')
-        if (element && element.scrollTop == 0) this.stopScroll = true
+        if (element && element.scrollTop === 0) this.stopScroll = true
       }
     }
   }

@@ -26,7 +26,11 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #373E43;
+    background-color: #32373d;
+  }
+
+  img {
+    vertical-align: middle;
   }
 
   a {
@@ -35,6 +39,10 @@
 
   a:focus {
     outline: none;
+  }
+
+  h1 {
+    font-size: 1.8rem;
   }
 
   label {
@@ -92,7 +100,6 @@
     font-size: 12px;
     line-height: 20px;
     color: #fff;
-    text-align: center;
     background-color: #337ab7;
     -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
     box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
@@ -129,7 +136,7 @@
     margin-left: 200px;
     padding: 15px;
     background-color: #ffffff;
-    height: 100%;
+    min-height: 100%;
   }
 </style>
 

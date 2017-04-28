@@ -27,7 +27,8 @@
 
   .logo {
     text-align: center;
-    padding: 20px 10px 10px 10px;
+    padding: 20px 10px;
+    background-color: #222a31;
   }
 
   .logo img {
@@ -35,7 +36,7 @@
   }
 
   ul {
-    margin-top: 10px;
+    margin-top: 0;
     padding: 0;
     list-style-type: none;
     text-align: center;
@@ -44,15 +45,15 @@
   ul > li > a {
     display: block;
     padding: 15px 30px;
-    color: #ffffff;
+    color: #eeeeee;
   }
 
   ul > li > a:not(.router-link-active):hover {
-    color: #2dbefb;
+    color: #ffffff;
   }
 
   ul > li > a.router-link-active {
-    background-color: #2dbefb;
+    background-color: #434b53;
   }
 </style>
 
