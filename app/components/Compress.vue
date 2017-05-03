@@ -54,6 +54,11 @@
 </template>
 
 <style scoped>
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
     #upload-zone {
         height: 250px;
         border: 2px dashed #4f9eb5;
@@ -199,11 +204,14 @@
                 current = current[0].trim().split('=')[1] || '0:0:0'
                 current = current.split(':')
                 current = 3600 * current[0] + 60 * current[1] + +current[2]
-                current = current / duration * 100
-                file.progressPercentage = Math.round(current)
+                current = Math.round(current / duration * 100)
 
-                // Update selectedFiles
-                this.$set(this.selectedFiles, index, file)
+                if (current > 0) {
+                  file.progressPercentage = current
+
+                  // Update selectedFiles
+                  this.$set(this.selectedFiles, index, file)
+                }
               });
 
               // Convert finished
