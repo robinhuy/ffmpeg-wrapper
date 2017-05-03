@@ -34,15 +34,14 @@
           </button>
 
           <ul>
-              <li v-for="f in selectedFiles">
-                  <span>{{ f.name }}</span>
+              <li v-for="f in selectedFiles" :key="f.path">
+                  <span>{{ f.name }} {{ f.progressPercent }} {{ f.isConverting }}</span>
                   <div class="progress">
-                      <div class="progress-bar" :style="'width: ' + f.progressPercent + '%'">
-                          <span class="sr-only">{{ f.progressPercent }} %</span>
-                      </div>
+                      <div class="progress-bar" :style="'width: ' + f.progressPercent + '%'"></div>
                   </div>
                   <button type="button">Compress</button>
                   <button type="button">Pause</button>
+                  <button type="button">Remove</button>
               </li>
           </ul>
       </div>
@@ -171,7 +170,7 @@
       },
       compressAll () {
         // Alert when not in override mode but setting prefix is empty
-        if (!override_mode && document.getElementById('setting-prefix').value.trim() === '') {
+        if (!this.override_mode && document.getElementById('setting-prefix').value.trim() === '') {
           let prefix = confirm('Do you want to left file prefix blank? (It will cause converted files replace the original files');
           if (!prefix) return false
         }
@@ -192,20 +191,20 @@
               let newFileName = settings.file_convert_prefix + file.name
               let newFilePath = path.dirname(file.path) + '/' + newFileName
 
-              this.selectedFiles[i].isConverting = true
+              file.isConverting = true
 
               // Check video duration
               exec(`ffmpeg -i ${file.path} 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
                 if (!error) {
-                  const duration = +stdout
+                  let duration = +stdout
 
                   // Convert video h264
-                  const converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
+                  let converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
 
                   // Display progress when converting
-                  converting.stderr.on('data', (data) => {
+                  converting.stderr.on('data', data => {
                     data = data.toString()
-                    console.log(data)
+//                    console.log(data)
 //                    this.logs += '<p>' + data + '</p>'
 
                     let current = data.match(/time=([0-9:.])*\s/) || ['']
@@ -213,21 +212,23 @@
                     current = current.split(':')
                     current = 3600 * current[0] + 60 * current[1] + +current[2]
                     current = current / duration * 100
-                    this.selectedFiles[i].progressPercent = Math.round(current)
+                    file.progressPercent = Math.round(current)
+
+                    // Update selectedFiles
+                    this.$set(this.selectedFiles, i, file)
 
                     // Scroll to bottom if user does not stop
 //                    if (!this.stopScroll) this.scrollToBottom()
                   });
 
                   // Convert finished
-                  converting.on('exit', (code) => {
+                  converting.on('exit', code => {
 //                  this.logs += '<p>Completed!</p>'
 //                  this.scrollToBottom()
-                    this.selectedFiles[i].isConverting = false
 
-                    // Reset input
-//                    document.getElementById('input-files').value = null
-//                    this.selectedFiles = []
+                    file.isConverting = false
+                    file.progressPercent = 100
+                    this.$set(this.selectedFiles, i, file)
 
                     // Notify finish if the window is lost focus
                     if (!remote.BrowserWindow.getFocusedWindow()) {
