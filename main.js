@@ -11,6 +11,7 @@ function createWindow () {
   // Create the browser window
   mainWindow = new BrowserWindow({width: 1024, height: 768})
 
+  //todo: save window size to setting
   // Load the index.html of the app
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
