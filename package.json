@@ -6,9 +6,9 @@
   "main": "main.js",
   "scripts": {
     "start": "webpack && electron main.js",
-    "mac": "export OS=mac && webpack && electron-packager --platform=darwin --icon logo.png.icns --ignore ffmpeg-windows --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
-    "win": "export OS=windows && webpack && electron-packager --platform=win32 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
-    "linux": "export OS=linux && webpack && electron-packager --platform=linux --arch=x64 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-windows --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js ."
+    "mac": "export e=production && export OS=mac && webpack && electron-packager --platform=darwin --icon logo.png.icns --ignore ffmpeg-windows --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
+    "windows": "export e=production && export OS=windows && webpack && electron-packager --platform=win32 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
+    "linux": "export e=production && export OS=linux && webpack && electron-packager --platform=linux --arch=x64 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-windows --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js ."
   },
   "repository": "",
   "keywords": [

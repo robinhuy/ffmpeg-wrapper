@@ -44,7 +44,7 @@
                     <div class="progress">
                         <div class="progress-bar" :style="'width: ' + file.progressPercentage + '%'"></div>
                     </div>
-                    <button type="button" v-on:click="compress(index)">Compress</button>
+                    <button type="button" v-on:click="compressOne(index)">Compress</button>
                     <button type="button" v-on:click="removeFile(index)">{{ file.isConverting ? 'Pause' : 'Remove' }}
                     </button>
                 </li>
@@ -171,10 +171,10 @@
         // Compress files which not converting
         let numberFiles = this.selectedFiles.length
         for (let i = 0; i < numberFiles; i++) {
-          this.compress(i)
+          this.compressOne(i)
         }
       },
-      compress (index) {
+      compressOne (index) {
         // Compress file which not converting
         let file = this.selectedFiles[index]
         if (!file.isConverting) {

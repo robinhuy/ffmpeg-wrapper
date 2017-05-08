@@ -26,7 +26,7 @@ function createWindow () {
   })
 
   // Open the DevTools
-  if (!process.env.OS)
+  if (process.env.e !== 'production')
     mainWindow.webContents.openDevTools({mode: 'detach'})
 }
 
