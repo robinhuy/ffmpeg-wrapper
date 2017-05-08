@@ -1,4 +1,4 @@
-# ffmpeg-wrapper
+# FFMPEG Wrapper
 Desktop Application base on FFMPEG
 
 ## Install
@@ -8,7 +8,7 @@ Desktop Application base on FFMPEG
     $ npm install
 ```
 
-2. Run app in development mode
+2. Run app
 
 - On Windows:
 
@@ -28,21 +28,21 @@ Desktop Application base on FFMPEG
     $ npm start
 ```
 
-3. Build app
+## Build app
 
-- For Windows:
+1. For Windows:
 
 ```
     $ npm windows
 ```
 
-- For Linux:
+2. For Linux:
 
 ```
     $ npm linux
 ```
 
-- For Mac:
+3. For Mac:
 
 ```
     $ npm mac
