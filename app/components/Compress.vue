@@ -48,7 +48,7 @@
                     <button type="button" v-on:click="compressOne(index)"
                             v-if="!file.isConverting && !file.isStop">Compress</button>
                     <button type="button" v-on:click="removeFile(index)">
-                        {{ file.isConverting && !file.isStop ? 'Pause' : 'Remove' }}
+                        {{ file.isConverting && !file.isStop ? 'Stop' : 'Remove' }}
                     </button>
                 </li>
             </ul>
