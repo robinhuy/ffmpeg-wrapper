@@ -13,6 +13,7 @@
   const {Menu, MenuItem} = remote
   const {spawn, exec} = require('child_process');
   const path = require('path');
+  const fs = require('fs');
   const imgPath = path.join(__dirname, 'img');
 
   let OS = process.env.OS || 'mac';

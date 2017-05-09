@@ -194,16 +194,20 @@
         return new Promise((resolve, reject) => {
           // Compress file which not converting
           let file = this.selectedFiles[index]
-          if (!file.isConverting) {
-            // todo: Check file exists then alert to prevent override
+          if (!file.isConverting && !file.isStop) {
+            // todo: Check file exists then alert confirm to prevent override
 
             let newFileName = this.prefix + file.name
+            if (this.override_mode) {
+              newFileName = '.' + Date.now() + index + file.name
+            }
+
             let newFilePath = path.dirname(file.path) + '/' + newFileName
 
             file.isConverting = true
 
             // Check video duration
-            exec(`ffmpeg -i ${file.path} 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
+            exec(`ffmpeg -i "${file.path}" 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
               if (!error) {
                 let duration = +stdout
 
@@ -229,7 +233,7 @@
                     // Update selectedFiles
                     this.$set(this.selectedFiles, index, file)
                   }
-                });
+                })
 
                 // Convert finished
                 converting.on('exit', code => {
@@ -239,10 +243,18 @@
                     file.isConverting = false
                     file.isStop = true
                     this.$set(this.selectedFiles, index, file)
+
+                    if (this.override_mode) {
+                      // Remove old file and replace with new file
+                      fs.unlinkSync(file.path);
+                      fs.renameSync(newFilePath, file.path)
+                      newFileName = file.name
+                    }
+
                     resolve(true)
 
                     // Notify finish for one file if the window is lost focus
-                    if (numberFiles === 1) {
+                    if (numberFiles) {
                       if (!remote.BrowserWindow.getFocusedWindow()) {
                         notifyDesktop('FFMPEG WRAPPER', `Compress ${newFileName} completed!`)
                       } else {
@@ -250,7 +262,7 @@
                       }
                     }
                   }
-                });
+                })
               } else {
                 reject(error)
               }
@@ -270,6 +282,20 @@
         let settings = APP_SETTING.getData()
 
         if (type === 'mode') {
+          // Not allow change mode when converting
+          let isConverting = false
+          let numberFiles = this.selectedFiles.length
+          for (let i = 0; i < numberFiles; i++) {
+            if (this.selectedFiles[i].isConverting) {
+              isConverting = true
+              break
+            }
+          }
+
+          // Revert mode if changed when converting
+          if (isConverting)
+            this.override_mode = !this.override_mode
+
           settings.override_mode = this.override_mode
         }
 
