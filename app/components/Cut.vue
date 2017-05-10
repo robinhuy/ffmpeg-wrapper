@@ -2,7 +2,7 @@
   <div>
     <h1>Cut video</h1>
 
-    <input type="file" v-on:change="chooseFiles" :accept="this.allowedExtension.join(',')"/>
+    <upload-zone :selectedFiles="'selectedFiles'" :allowedExtension="allowedExtension" :isMultiple="false"></upload-zone>
 
     <div v-html="videoPlayer"></div>
   </div>
@@ -13,15 +13,24 @@
 </style>
 
 <script>
+  import UploadZone from './UploadZone.vue'
+
   export default {
     name: 'cut',
+    components: {
+      UploadZone
+    },
+    props: ['allowedExtension'],
     data () {
       return {
-        videoPlayer: ''
+        videoPlayer: '',
+        selectedFiles: []
       }
     },
     methods: {
+      loadVideo () {
 
+      }
     }
   }
 </script>

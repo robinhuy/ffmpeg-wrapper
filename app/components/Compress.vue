@@ -16,20 +16,7 @@
                    v-on:change="saveSetting('prefix')"/>
         </label>
 
-        <div id="upload-zone" class="center"
-             :class="{hover: isDragOver}"
-             v-on:click="uploadFiles"
-             v-on:dragover.stop.prevent="dragFiles"
-             v-on:dragleave.stop.prevent="dragLeave"
-             v-on:drop.stop.prevent="dropFiles"
-             v-on:mouseover="mouseOverImage"
-             v-on:mouseout="mouseOutImage">
-            <img :src="imgSource"/>
-            <div class="message-title">Select file to compress</div>
-            <div class="message">Or drag and drop video file</div>
-        </div>
-
-        <input type="file" id="input-files" multiple v-on:change="chooseFiles" :accept="this.allowedExtension.join(',')">
+        <upload-zone :selectedFiles="'selectedFiles'" :allowedExtension="allowedExtension" :isMultiple="true"></upload-zone>
 
         <div class="center">
             <button type="button"
@@ -62,42 +49,6 @@
         padding: 0;
     }
 
-    #upload-zone {
-        height: 250px;
-        border: 2px dashed #4f9eb5;
-        border-radius: 5px;
-        cursor: pointer;
-        color: #616161;
-    }
-
-    #upload-zone.hover {
-        background-color: grey;
-    }
-
-    #upload-zone img {
-        width: 100px;
-        margin-top: 30px;
-    }
-
-    #upload-zone .message-title {
-        margin-top: 20px;
-        font-size: 22px;
-        font-weight: bold;
-    }
-
-    #upload-zone .message {
-        margin-top: 20px;
-        font-size: 18px;
-    }
-
-    #upload-zone:hover {
-        color: #000000;
-    }
-
-    #input-files {
-        display: none;
-    }
-
     input.invalid {
         border: 1px solid red;
     }
@@ -109,14 +60,18 @@
 </style>
 
 <script>
+  import UploadZone from './UploadZone.vue'
+
   export default {
     name: 'compress',
+    components: {
+      UploadZone
+    },
     props: ['allowedExtension'],
     data () {
       return {
         override_mode: false,
         prefix: 'convert-',
-        imgSource: imgPath + '/choose-files.png',
         selectedFiles: [],
         isDragOver: false
       }
@@ -127,49 +82,6 @@
       this.prefix = APP_SETTING.getData().prefix || 'convert-'
     },
     methods: {
-      mouseOverImage () {
-        this.imgSource = imgPath + '/choose-files-hover.png'
-      },
-      mouseOutImage () {
-        this.imgSource = imgPath + '/choose-files.png'
-      },
-      uploadFiles () {
-        document.getElementById('input-files').click();
-      },
-      dragFiles (e) {
-        e.dataTransfer.dropEffect = 'copy';
-        this.isDragOver = true
-      },
-      dragLeave (e) {
-        this.isDragOver = false
-      },
-      dropFiles (e) {
-        this.mergeUploadFiles(e.dataTransfer.files)
-        this.isDragOver = false
-      },
-      chooseFiles (e) {
-        this.mergeUploadFiles(e.target.files)
-      },
-      mergeUploadFiles (files) {
-        // Convert Object to Array
-        let arr = Object.keys(files).map(key => {
-          return files[key]
-        })
-        let arrLength = arr.length
-
-        for (let i = 0; i < arrLength; i++) {
-          // Check file already exist
-          let exist = this.selectedFiles.find(selected => {
-            return selected.path === arr[i].path;
-          })
-
-          // Push allowed file which is not exist
-          let extName = path.extname(arr[i].name)
-          if (exist === undefined && this.allowedExtension.indexOf(extName) !== -1) {
-            this.selectedFiles.push(arr[i])
-          }
-        }
-      },
       compressAll () {
         // Compress files which not converting
         let numberFiles = this.selectedFiles.length
@@ -254,7 +166,7 @@
                     resolve(true)
 
                     // Notify finish for one file if the window is lost focus
-                    if (numberFiles) {
+                    if (!numberFiles) {
                       if (!remote.BrowserWindow.getFocusedWindow()) {
                         notifyDesktop('FFMPEG WRAPPER', `Compress ${newFileName} completed!`)
                       } else {
