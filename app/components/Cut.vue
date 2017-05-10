@@ -2,7 +2,9 @@
   <div>
     <h1>Cut video</h1>
 
-    <upload-zone :selectedFiles="'selectedFiles'" :allowedExtension="allowedExtension" :isMultiple="false"></upload-zone>
+    <upload-zone :allowedExtension="allowedExtension"
+                 :isMultiple="false"
+                 :methodOnSelect="'loadVideo'"></upload-zone>
 
     <div v-html="videoPlayer"></div>
   </div>
@@ -24,12 +26,11 @@
     data () {
       return {
         videoPlayer: '',
-        selectedFiles: []
       }
     },
     methods: {
-      loadVideo () {
-
+      loadVideo (a) {
+        console.log('abc',a)
       }
     }
   }

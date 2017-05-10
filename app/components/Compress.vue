@@ -16,7 +16,9 @@
                    v-on:change="saveSetting('prefix')"/>
         </label>
 
-        <upload-zone :selectedFiles="'selectedFiles'" :allowedExtension="allowedExtension" :isMultiple="true"></upload-zone>
+        <upload-zone :allowedExtension="allowedExtension"
+                     :isMultiple="true"
+                     :methodOnSelect="'mergeUploadFiles'"></upload-zone>
 
         <div class="center">
             <button type="button"
@@ -82,6 +84,26 @@
       this.prefix = APP_SETTING.getData().prefix || 'convert-'
     },
     methods: {
+      mergeUploadFiles (files) {
+        // Convert Object to Array
+        let arr = Object.keys(files).map(key => {
+          return files[key]
+        })
+        let arrLength = arr.length
+
+        for (let i = 0; i < arrLength; i++) {
+          // Check file already exist
+          let exist = this.selectedFiles.find(selected => {
+            return selected.path === arr[i].path;
+          })
+
+          // Push allowed file which is not exist
+          let extName = path.extname(arr[i].name)
+          if (exist === undefined && this.allowedExtension.indexOf(extName) !== -1) {
+            this.selectedFiles.push(arr[i])
+          }
+        }
+      },
       compressAll () {
         // Compress files which not converting
         let numberFiles = this.selectedFiles.length

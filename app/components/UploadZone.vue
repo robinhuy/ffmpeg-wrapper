@@ -61,7 +61,7 @@
 <script>
   export default {
     name: 'upload-zone',
-    props: ['selectedFiles', 'isMultiple', 'allowedExtension'],
+    props: ['isMultiple', 'allowedExtension', 'methodOnSelect'],
     data () {
       return {
         imgSource: imgPath + '/choose-files.png',
@@ -69,7 +69,7 @@
       }
     },
     mounted () {
-      console.log(this.isMultiple)
+      console.log(this.methodOnSelect)
     },
     methods: {
       mouseOverImage () {
@@ -89,32 +89,12 @@
         this.isDragOver = false
       },
       dropFiles (e) {
-        this.mergeUploadFiles(e.dataTransfer.files)
+        this.$parent[this.methodOnSelect](e.dataTransfer.files)
         this.isDragOver = false
       },
       chooseFiles (e) {
-        this.mergeUploadFiles(e.target.files)
-      },
-      mergeUploadFiles (files) {
-        // Convert Object to Array
-        let arr = Object.keys(files).map(key => {
-          return files[key]
-        })
-        let arrLength = arr.length
-
-        for (let i = 0; i < arrLength; i++) {
-          // Check file already exist
-          let exist = this.$parent[this.selectedFiles].find(selected => {
-            return selected.path === arr[i].path;
-          })
-
-          // Push allowed file which is not exist
-          let extName = path.extname(arr[i].name)
-          if (exist === undefined && this.allowedExtension.indexOf(extName) !== -1) {
-            this.$parent[this.selectedFiles].push(arr[i])
-          }
-        }
-      },
+        this.$parent[this.methodOnSelect](e.target.files)
+      }
     }
   }
 </script>
