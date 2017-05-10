@@ -2,19 +2,9 @@
     <div>
         <h1>Compress Video</h1>
 
-        <label>
-            <input type="checkbox" v-model="override_mode" v-on:change="saveSetting('mode')"/>
-            Replace original files
-        </label>
-
-        <label v-if="!override_mode">
-            File Convert Prefix
-            <input type="text" id="setting-prefix"
-                   :class="{invalid: this.prefix === ''}"
-                   v-model="prefix"
-                   v-on:keyup.delete="alertBlankPrefix()"
-                   v-on:change="saveSetting('prefix')"/>
-        </label>
+        <setting-mode :overrideMode="overrideMode"
+                      :filePrefix="filePrefix"
+                      :methodOnChange="'saveSetting'"></setting-mode>
 
         <upload-zone :allowedExtension="allowedExtension"
                      :isMultiple="true"
@@ -23,7 +13,7 @@
         <div class="center">
             <button type="button"
                     class="btn btn-compress-all"
-                    :class="{disabled: selectedFiles.length === 0 || (!this.override_mode && this.prefix === '')}"
+                    :class="{disabled: selectedFiles.length === 0 || (!this.overrideMode && this.filePrefix === '')}"
                     v-on:click="compressAll">Compress all
             </button>
 
@@ -51,10 +41,6 @@
         padding: 0;
     }
 
-    input.invalid {
-        border: 1px solid red;
-    }
-
     .btn-compress-all {
         margin: 15px;
         font-size: 20px;
@@ -62,26 +48,28 @@
 </style>
 
 <script>
+  import SettingMode from './SettingMode.vue'
   import UploadZone from './UploadZone.vue'
 
   export default {
     name: 'compress',
     components: {
+      SettingMode,
       UploadZone
     },
     props: ['allowedExtension'],
     data () {
       return {
-        override_mode: false,
-        prefix: 'convert-',
+        overrideMode: false,
+        filePrefix: 'convert-',
         selectedFiles: [],
         isDragOver: false
       }
     },
     mounted () {
-      // Load last used prefix
-      this.override_mode = APP_SETTING.getData().override_mode || false
-      this.prefix = APP_SETTING.getData().prefix || 'convert-'
+      // Load last used filePrefix
+      this.overrideMode = APP_SETTING.getData().overrideMode || false
+      this.filePrefix = APP_SETTING.getData().filePrefix || 'convert-'
     },
     methods: {
       mergeUploadFiles (files) {
@@ -113,16 +101,18 @@
           arr.push(this.compressOne(i, numberFiles))
         }
 
-        Promise.all(arr).then(() => {
-          // Notify finish for all files if the window is lost focus
-          if (!remote.BrowserWindow.getFocusedWindow()) {
-            notifyDesktop('FFMPEG WRAPPER', 'Compress all completed!')
-          } else {
-            alert(`Compress all completed!`)
-          }
-        }).catch(err => {
-          alert('Error: ' + err.toString())
-        })
+        if (this.selectedFiles.length > 0) {
+          Promise.all(arr).then(() => {
+            // Notify finish for all files if the window is lost focus
+            if (!remote.BrowserWindow.getFocusedWindow()) {
+              notifyDesktop('FFMPEG WRAPPER', 'Compress all completed!')
+            } else {
+              alert(`Compress all completed!`)
+            }
+          }).catch(err => {
+            alert('Error: ' + err.toString())
+          })
+        }
       },
       compressOne (index, numberFiles) {
         return new Promise((resolve, reject) => {
@@ -131,8 +121,8 @@
           if (!file.isConverting && !file.isStop) {
             // todo: Check file exists then alert confirm to prevent override
 
-            let newFileName = this.prefix + file.name
-            if (this.override_mode) {
+            let newFileName = this.filePrefix + file.name
+            if (this.overrideMode) {
               newFileName = '.' + Date.now() + index + file.name
             }
 
@@ -178,7 +168,7 @@
                     file.isStop = true
                     this.$set(this.selectedFiles, index, file)
 
-                    if (this.override_mode) {
+                    if (this.overrideMode) {
                       // Remove old file and replace with new file
                       fs.unlinkSync(file.path);
                       fs.renameSync(newFilePath, file.path)
@@ -206,10 +196,17 @@
           }
         })
       },
-      alertBlankPrefix () {
-        // Alert when not in override mode but setting prefix is empty
-        if (!this.override_mode && this.prefix === '') {
-          alert('Cannot left file prefix blank!');
+      removeFile (index) {
+        // Stop converting process
+        if (this.selectedFiles[index].convertProcess) {
+          this.selectedFiles[index].convertProcess.kill('SIGINT')
+          this.selectedFiles[index].convertProcess = null
+          this.selectedFiles[index].isConverting = false
+          this.selectedFiles[index].isStop = true
+        }
+        // Remove file
+        else {
+          this.selectedFiles.splice(index, 1)
         }
       },
       saveSetting (type) {
@@ -228,31 +225,18 @@
 
           // Revert mode if changed when converting
           if (isConverting)
-            this.override_mode = !this.override_mode
+            this.overrideMode = !this.overrideMode
 
-          settings.override_mode = this.override_mode
+          settings.compressOverrideMode = this.overrideMode
         }
 
-        if (type === 'prefix') {
-          if (!this.override_mode && this.prefix !== '') {
-            settings.prefix = this.prefix
+        if (type === 'filePrefix') {
+          if (!this.overrideMode && this.filePrefix !== '') {
+            settings.compressFilePrefix = this.filePrefix
           }
         }
 
         APP_SETTING.setData(settings)
-      },
-      removeFile (index) {
-        // Stop converting process
-        if (this.selectedFiles[index].convertProcess) {
-          this.selectedFiles[index].convertProcess.kill('SIGINT')
-          this.selectedFiles[index].convertProcess = null
-          this.selectedFiles[index].isConverting = false
-          this.selectedFiles[index].isStop = true
-        }
-        // Remove file
-        else {
-          this.selectedFiles.splice(index, 1)
-        }
       }
     }
   }

@@ -68,9 +68,6 @@
         isDragOver: false
       }
     },
-    mounted () {
-      console.log(this.methodOnSelect)
-    },
     methods: {
       mouseOverImage () {
         this.imgSource = imgPath + '/choose-files-hover.png'
