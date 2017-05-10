@@ -7,7 +7,7 @@
     <div id="main-content">
       <transition name="fade" mode="out-in">
         <keep-alive>
-          <router-view></router-view>
+          <router-view :allowedExtension="allowedExtension"></router-view>
         </keep-alive>
       </transition>
     </div>
@@ -146,6 +146,11 @@
   export default {
     components: {
       LeftMenu
+    },
+    data () {
+      return {
+        allowedExtension: ['.mp4', '.flv', '.MP4', '.FLV']
+      }
     }
   }
 </script>

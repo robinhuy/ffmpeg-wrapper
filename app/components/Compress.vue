@@ -29,7 +29,7 @@
             <div class="message">Or drag and drop video file</div>
         </div>
 
-        <input type="file" id="input-files" multiple v-on:change="chooseFiles" :accept="this.allowed.join(',')">
+        <input type="file" id="input-files" multiple v-on:change="chooseFiles" :accept="this.allowedExtension.join(',')">
 
         <div class="center">
             <button type="button"
@@ -111,9 +111,9 @@
 <script>
   export default {
     name: 'compress',
+    props: ['allowedExtension'],
     data () {
       return {
-        allowed: ['.mp4', '.flv', '.MP4', '.FLV'],
         override_mode: false,
         prefix: 'convert-',
         imgSource: imgPath + '/choose-files.png',
@@ -165,7 +165,7 @@
 
           // Push allowed file which is not exist
           let extName = path.extname(arr[i].name)
-          if (exist === undefined && this.allowed.indexOf(extName) !== -1) {
+          if (exist === undefined && this.allowedExtension.indexOf(extName) !== -1) {
             this.selectedFiles.push(arr[i])
           }
         }

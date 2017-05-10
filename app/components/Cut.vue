@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1>This feature will implement later</h1>
+    <h1>Cut video</h1>
+
+    <input type="file" v-on:change="chooseFiles" :accept="this.allowedExtension.join(',')"/>
+
+    <div v-html="videoPlayer"></div>
   </div>
 </template>
 
@@ -10,6 +14,14 @@
 
 <script>
   export default {
-    name: 'cut'
+    name: 'cut',
+    data () {
+      return {
+        videoPlayer: ''
+      }
+    },
+    methods: {
+
+    }
   }
 </script>
