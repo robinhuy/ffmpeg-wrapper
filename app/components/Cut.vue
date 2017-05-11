@@ -11,26 +11,29 @@
     <div id="setup">
       <setting-mode :overrideMode="overrideMode"
                     :filePrefix="filePrefix"
-                    :methodOnChange="'saveSetting'"></setting-mode>
+                    :canChangeSetting="canChangeSetting"
+                    :overrideModeProp="'overrideMode'"
+                    :filePrefixProp="'filePrefix'"
+                    :componentName="'cut'"></setting-mode>
 
       <label>
         Start time
         <input type="text" id="start-time"
                v-model="startTime"
-               v-on:change=""/>
+               @change=""/>
       </label>
 
       <label>
         End time
         <input type="text" id="end-time"
                v-model="endTime"
-               v-on:change=""/>
+               @change=""/>
       </label>
 
       <button type="button"
               class="btn btn-cut"
               :class="{disabled: startTime === '' || endTime === ''}"
-              v-on:click="">Cut video
+              @click="">Cut video
       </button>
     </div>
   </div>

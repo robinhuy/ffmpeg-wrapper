@@ -1,7 +1,7 @@
 <template>
   <div>
     <label>
-      <input type="checkbox" v-on:change="changeMode('mode')" :checked="overrideMode" />
+      <input type="checkbox" id="setting-mode" @change="saveSetting()" :checked="overrideMode" />
       Replace original files
     </label>
 
@@ -10,7 +10,7 @@
       <input type="text" id="setting-prefix"
              :class="{invalid: this.filePrefix === ''}"
              :value="filePrefix"
-             v-on:input="changePrefix"/>
+             @input="saveSetting"/>
     </label>
   </div>
 </template>
@@ -24,22 +24,39 @@
 <script>
   export default {
     name: 'setting-mode',
-    props: ['overrideMode', 'filePrefix', 'methodOnChange'],
-    computed: {
-
-    },
+    props: ['overrideMode', 'filePrefix', 'canChangeSetting', 'overrideModeProp', 'filePrefixProp', 'componentName'],
     methods: {
-      changePrefix (e) {
-        this.$parent.filePrefix = e.target.value
-        if (!this.overrideMode && this.filePrefix === '') {
-          alert('Cannot left file prefix blank!')
+      saveSetting (e) {
+        if (this.canChangeSetting) {
+          let settings = APP_SETTING.getData()
+
+          // Setting mode (checkbox)
+          if (e === undefined) {
+            this.$parent[this.overrideModeProp] = !this.overrideMode
+            settings[this.componentName + this.toCapitalize(this.overrideModeProp)] = !this.overrideMode
+          }
+          // Setting prefix (input)
+          else {
+            this.$parent[this.filePrefixProp] = e.target.value
+            if (!this.overrideMode && this.filePrefix === '') {
+              alert('Cannot left file prefix blank!')
+            } else {
+              settings[this.componentName + this.toCapitalize(this.filePrefixProp)] = this.filePrefix
+            }
+          }
+
+          APP_SETTING.setData(settings)
         } else {
-          this.$parent[this.methodOnChange]('filePrefix')
+          if (e === undefined) {
+            let checkbox = document.getElementById('setting-mode')
+            checkbox.checked = !checkbox.checked
+          } else {
+            document.getElementById('setting-prefix').value = this.$parent[this.filePrefixProp]
+          }
         }
       },
-      changeMode () {
-        this.$parent.overrideMode = !this.$parent.overrideMode
-        this.$parent[this.methodOnChange]('mode')
+      toCapitalize (str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
       }
     }
   }

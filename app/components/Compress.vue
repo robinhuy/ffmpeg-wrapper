@@ -4,7 +4,10 @@
 
         <setting-mode :overrideMode="overrideMode"
                       :filePrefix="filePrefix"
-                      :methodOnChange="'saveSetting'"></setting-mode>
+                      :canChangeSetting="canChangeSetting"
+                      :overrideModeProp="'overrideMode'"
+                      :filePrefixProp="'filePrefix'"
+                      :componentName="'compress'"></setting-mode>
 
         <upload-zone :allowedExtension="allowedExtension"
                      :isMultiple="true"
@@ -14,7 +17,7 @@
             <button type="button"
                     class="btn btn-compress-all"
                     :class="{disabled: selectedFiles.length === 0 || (!this.overrideMode && this.filePrefix === '')}"
-                    v-on:click="compressAll">Compress all
+                    @click="compressAll">Compress all
             </button>
 
             <ul>
@@ -24,9 +27,9 @@
                         <div class="progress-bar" :style="'width: ' + file.progressPercentage + '%'"></div>
                     </div>
 
-                    <button type="button" v-on:click="compressOne(index)"
+                    <button type="button" @click="compressOne(index)"
                             v-if="!file.isConverting && !file.isStop">Compress</button>
-                    <button type="button" v-on:click="removeFile(index)">
+                    <button type="button" @click="removeFile(index)">
                         {{ file.isConverting && !file.isStop ? 'Stop' : 'Remove' }}
                     </button>
                 </li>
@@ -66,10 +69,26 @@
         isDragOver: false
       }
     },
+    computed: {
+      canChangeSetting () {
+        // Not allow change setting when converting
+        let isConverting = false
+        let numberFiles = this.selectedFiles.length
+
+        for (let i = 0; i < numberFiles; i++) {
+          if (this.selectedFiles[i].isConverting) {
+            isConverting = true
+            break
+          }
+        }
+
+        return !isConverting
+      }
+    },
     mounted () {
       // Load last used filePrefix
-      this.overrideMode = APP_SETTING.getData().overrideMode || false
-      this.filePrefix = APP_SETTING.getData().filePrefix || 'convert-'
+      this.overrideMode = APP_SETTING.getData().compressOverrideMode || false
+      this.filePrefix = APP_SETTING.getData().compressFilePrefix || 'convert-'
     },
     methods: {
       mergeUploadFiles (files) {
@@ -224,7 +243,7 @@
           }
 
           // Revert mode if changed when converting
-          if (isConverting)
+          if (!isConverting)
             this.overrideMode = !this.overrideMode
 
           settings.compressOverrideMode = this.overrideMode

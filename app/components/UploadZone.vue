@@ -2,12 +2,12 @@
   <div>
     <div id="upload-zone" class="center"
          :class="{hover: isDragOver}"
-         v-on:click="uploadFiles"
-         v-on:dragover.stop.prevent="dragFiles"
-         v-on:dragleave.stop.prevent="dragLeave"
-         v-on:drop.stop.prevent="dropFiles"
-         v-on:mouseover="mouseOverImage"
-         v-on:mouseout="mouseOutImage">
+         @click="uploadFiles"
+         @dragover.stop.prevent="dragFiles"
+         @dragleave.stop.prevent="dragLeave"
+         @drop.stop.prevent="dropFiles"
+         @mouseover="mouseOverImage"
+         @mouseout="mouseOutImage">
       <img :src="imgSource"/>
       <div class="message-title">Select {{ isMultiple ? 'files' : 'file' }} to compress</div>
       <div class="message">Or drag and drop video {{ isMultiple ? 'files' : 'file' }}</div>
@@ -16,7 +16,7 @@
     <input type="file" id="input-files"
            :multiple="isMultiple"
            :accept="this.allowedExtension.join(',')"
-           v-on:change="chooseFiles" />
+           @change="chooseFiles" />
   </div>
 </template>
 
