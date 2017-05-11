@@ -33,7 +33,7 @@
       <button type="button"
               class="btn btn-cut"
               :class="{disabled: startTime === '' || endTime === ''}"
-              @click="">Cut video
+              @click="cutVideo">Cut video
       </button>
     </div>
   </div>
@@ -68,35 +68,22 @@
         filePrefix: 'cut-',
         videoPlayer: '<video controls style="width: 100%"><source src="" type="video/mp4"></video>`',
         startTime: '00:00:00',
-        endTime: ''
+        endTime: '',
+        video: null
+      }
+    },
+    computed: {
+      canChangeSetting () {
+        return true
       }
     },
     methods: {
-      saveSetting (type) {
-        let settings = APP_SETTING.getData()
-
-        if (type === 'mode') {
-          //todo: Not allow change mode when cutting
-          let isCutting = false
-
-          //todo: Revert mode if changed when cutting
-          if (isCutting)
-            this.overrideMode = !this.overrideMode
-
-          settings.cutOverrideMode = this.overrideMode
-        }
-
-        if (type === 'filePrefix') {
-          if (!this.overrideMode && this.filePrefix !== '') {
-            settings.cutFilePrefix = this.filePrefix
-          }
-        }
-
-        APP_SETTING.setData(settings)
-      },
       loadVideo (files) {
-        console.log(files[0])
-        this.videoPlayer = `<video controls style="width: 100%"><source src="${files[0].path}" type="video/mp4"></video>`
+        this.video = files[0]
+        this.videoPlayer = `<video controls style="width: 100%"><source src="${this.video.path}" type="video/mp4"></video>`
+      },
+      cutVideo () {
+
       }
     }
   }
