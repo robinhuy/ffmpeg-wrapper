@@ -51,6 +51,7 @@
 </style>
 
 <script>
+  import Utils from './Utils.vue'
   import SettingMode from './SettingMode.vue'
   import UploadZone from './UploadZone.vue'
 
@@ -123,11 +124,7 @@
         if (this.selectedFiles.length > 0) {
           Promise.all(arr).then(() => {
             // Notify finish for all files if the window is lost focus
-            if (!remote.BrowserWindow.getFocusedWindow()) {
-              notifyDesktop('FFMPEG WRAPPER', 'Compress all completed!')
-            } else {
-              alert(`Compress all completed!`)
-            }
+            Utils.notify(`Compress all completed!`)
           }).catch(err => {
             alert('Error: ' + err.toString())
           })
@@ -198,11 +195,7 @@
 
                     // Notify finish for one file if the window is lost focus
                     if (!numberFiles) {
-                      if (!remote.BrowserWindow.getFocusedWindow()) {
-                        notifyDesktop('FFMPEG WRAPPER', `Compress ${newFileName} completed!`)
-                      } else {
-                        alert(`Compress ${newFileName} completed!`)
-                      }
+                      Utils.notify(`Compress ${newFileName} completed!`)
                     }
                   }
                 })

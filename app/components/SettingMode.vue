@@ -22,6 +22,8 @@
 </style>
 
 <script>
+  import Utils from './Utils.vue'
+
   export default {
     name: 'setting-mode',
     props: ['overrideMode', 'filePrefix', 'canChangeSetting', 'overrideModeProp', 'filePrefixProp', 'componentName'],
@@ -33,7 +35,7 @@
           // Setting mode (checkbox)
           if (e === undefined) {
             this.$parent[this.overrideModeProp] = !this.overrideMode
-            settings[this.componentName + this.toCapitalize(this.overrideModeProp)] = !this.overrideMode
+            settings[this.componentName + Utils.toCapitalize(this.overrideModeProp)] = !this.overrideMode
           }
           // Setting prefix (input)
           else {
@@ -41,7 +43,7 @@
             if (!this.overrideMode && this.filePrefix === '') {
               alert('Cannot left file prefix blank!')
             } else {
-              settings[this.componentName + this.toCapitalize(this.filePrefixProp)] = this.filePrefix
+              settings[this.componentName + Utils.toCapitalize(this.filePrefixProp)] = this.filePrefix
             }
           }
 
@@ -54,9 +56,6 @@
             document.getElementById('setting-prefix').value = this.$parent[this.filePrefixProp]
           }
         }
-      },
-      toCapitalize (str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
       }
     }
   }

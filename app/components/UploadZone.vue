@@ -91,6 +91,7 @@
       },
       chooseFiles (e) {
         this.$parent[this.methodOnSelect](e.target.files)
+        document.getElementById('input-files').value = null;
       }
     }
   }
