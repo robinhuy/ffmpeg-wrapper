@@ -71,9 +71,9 @@
       return {
         overrideMode: false,
         filePrefix: 'cut-',
-        videoPlayer: '<video controls style="width: 100%"><source src="" type="video/mp4"></video>`',
+        videoPlayer: '<video controls style="width: 100%"><source src="" type="video/mp4"></video>',
         startTime: '00:00:00',
-        endTime: '',
+        endTime: '00:30:00',
         video: null,
         isCutting: false
       }
@@ -89,6 +89,8 @@
         this.videoPlayer = `<video controls style="width: 100%"><source src="${this.video.path}" type="video/mp4"></video>`
       },
       cutVideo () {
+        let file = this.video
+
         if (!this.isCutting) {
           let newFileName = this.filePrefix + file.name
           if (this.overrideMode) {
@@ -97,20 +99,19 @@
 
           let newFilePath = path.dirname(file.path) + '/' + newFileName
 
-          file.isConverting = true
+          file.isCutting = true
 
           // Check video duration
           exec(`ffmpeg -i "${file.path}" 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
             if (!error) {
               let duration = +stdout
 
-              // Convert video h264
-              let converting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-c:a', 'copy', '-x264-params', 'crf=30', '-b:a', '64k', `"${newFilePath}"`, '-y'], {shell: true})
-              file.convertProcess = converting
-              this.$set(this.selectedFiles, index, file)
+              // Cut video from start time to end time
+              let cutting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-ss', this.startTime, '-to', this.endTime, '-async', '1', `"${newFilePath}"`, '-y'], {shell: true})
+              file.cutProcess = cutting
 
-              // Display progress when converting
-              converting.stderr.on('data', data => {
+              // Display progress when cutting
+              cutting.stderr.on('data', data => {
                 data = data.toString()
 
                 // Calculate the progress percentage
@@ -122,20 +123,16 @@
 
                 if (current > 0) {
                   file.progressPercentage = current
-
-                  // Update selectedFiles
-                  this.$set(this.selectedFiles, index, file)
                 }
               })
 
-              // Convert finished
-              converting.on('exit', code => {
+              // Cut finished
+              cutting.on('exit', code => {
                 if (code === 0) {
                   file.progressPercentage = 100
-                  file.convertProcess = null
-                  file.isConverting = false
+                  file.cutProcess = null
+                  file.isCutting = false
                   file.isStop = true
-                  this.$set(this.selectedFiles, index, file)
 
                   if (this.overrideMode) {
                     // Remove old file and replace with new file
@@ -144,12 +141,8 @@
                     newFileName = file.name
                   }
 
-                  resolve(true)
-
                   // Notify finish if the window is lost focus
-                  if (!numberFiles) {
-                    Utils.notify(`Cut ${newFileName} completed!`)
-                  }
+                  Utils.notify(`Cut ${newFileName} completed!`)
                 }
               })
             }
