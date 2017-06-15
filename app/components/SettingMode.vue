@@ -39,7 +39,7 @@
           }
           // Setting prefix (input)
           else {
-            this.$parent[this.filePrefixProp] = e.target.value
+            this.$parent[this.filePrefixProp] = e.target.value.trim()
             if (!this.overrideMode && this.filePrefix === '') {
               alert('Cannot left file prefix blank!')
             } else {

@@ -19,15 +19,15 @@
       <label>
         Start time
         <input type="text" id="start-time"
-               v-model="startTime"
-               @change=""/>
+               v-model.trim="startTime"
+               @change="validateDuration('startTime')"/>
       </label>
 
       <label>
         End time
         <input type="text" id="end-time"
-               v-model="endTime"
-               @change=""/>
+               v-model.trim="endTime"
+               @change="validateDuration('endTime')"/>
       </label>
 
       <button type="button"
@@ -87,6 +87,11 @@
       loadVideo (files) {
         this.video = files[0]
         this.videoPlayer = `<video controls style="width: 100%"><source src="${this.video.path}" type="video/mp4"></video>`
+      },
+      validateDuration (input) {
+        if (!this[input].match(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)) {
+          alert('Invalid time')
+        }
       },
       cutVideo () {
         let file = this.video
