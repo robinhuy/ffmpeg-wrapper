@@ -5,6 +5,8 @@ import Compress from './components/pages/Compress.vue'
 import Convert from './components/pages/Convert.vue'
 import Cut from './components/pages/Cut.vue'
 import Split from './components/pages/Split.vue'
+import Join from './components/pages/Join.vue'
+import AdjustVolume from './components/pages/AdjustVolume.vue'
 import Home from './components/pages/Home.vue'
 
 Vue.use(VueRouter)
@@ -15,6 +17,8 @@ const routes = [
   { path: '/convert', component: Convert },
   { path: '/cut', component: Cut },
   { path: '/split', component: Split },
+  { path: '/join', component: Join },
+  { path: '/adjust-volume', component: AdjustVolume },
   { path: '*', component: Home }
 ]
 

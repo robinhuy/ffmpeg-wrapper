@@ -19,6 +19,12 @@
       <li>
         <router-link to="/split" exact>Split Video/Audio</router-link>
       </li>
+      <li>
+        <router-link to="/join" exact>Join Video/Audio</router-link>
+      </li>
+      <li>
+        <router-link to="/adjust-volume" exact>Adjust Volume</router-link>
+      </li>
     </ul>
   </div>
 </template>

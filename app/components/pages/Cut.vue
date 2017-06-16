@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Cut video</h1>
+    <h1>Cut Video/Audio</h1>
 
     <upload-zone :actionName="'cut'"
                  :allowedExtension="allowedExtension"
