@@ -2,7 +2,8 @@
   <div>
     <h1>Cut video</h1>
 
-    <upload-zone :allowedExtension="allowedExtension"
+    <upload-zone :actionName="'cut'"
+                 :allowedExtension="allowedExtension"
                  :isMultiple="false"
                  :methodOnSelect="'loadVideo'"></upload-zone>
 
@@ -124,7 +125,7 @@
         if (!this.isCutting) {
           let newFileName = this.filePrefix + file.name
           if (this.overrideMode) {
-            newFileName = '.' + Date.now() + index + file.name
+            newFileName = '.' + Date.now() + file.name
           }
 
           let newFilePath = path.dirname(file.path) + '/' + newFileName

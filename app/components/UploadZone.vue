@@ -9,7 +9,7 @@
          @mouseover="mouseOverImage"
          @mouseout="mouseOutImage">
       <img :src="imgSource"/>
-      <div class="message-title">Select {{ isMultiple ? 'files' : 'file' }} to compress</div>
+      <div class="message-title">Select {{ isMultiple ? 'files' : 'file' }} to {{ actionName }}</div>
       <div class="message">Or drag and drop video {{ isMultiple ? 'files' : 'file' }}</div>
     </div>
 
@@ -61,7 +61,7 @@
 <script>
   export default {
     name: 'upload-zone',
-    props: ['isMultiple', 'allowedExtension', 'methodOnSelect'],
+    props: ['actionName', 'isMultiple', 'allowedExtension', 'methodOnSelect'],
     data () {
       return {
         imgSource: imgPath + '/choose-files.png',

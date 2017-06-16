@@ -9,7 +9,8 @@
                       :filePrefixProp="'filePrefix'"
                       :componentName="'compress'"></setting-mode>
 
-        <upload-zone :allowedExtension="allowedExtension"
+        <upload-zone :actionName="'compress'"
+                     :allowedExtension="allowedExtension"
                      :isMultiple="true"
                      :methodOnSelect="'mergeUploadFiles'"></upload-zone>
 

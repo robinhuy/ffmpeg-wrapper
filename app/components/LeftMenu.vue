@@ -11,10 +11,10 @@
         <router-link to="/compress" exact>Compress Video</router-link>
       </li>
       <li>
-        <router-link to="/cut" exact>Cut Video/Audio</router-link>
+        <router-link to="/convert" exact>Convert Video</router-link>
       </li>
       <li>
-        <router-link to="/convert" exact>Convert Video</router-link>
+        <router-link to="/cut" exact>Cut Video/Audio</router-link>
       </li>
       <li>
         <router-link to="/split" exact>Split Video/Audio</router-link>
