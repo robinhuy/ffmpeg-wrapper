@@ -52,9 +52,9 @@
 </style>
 
 <script>
-  import Utils from './Utils.vue'
-  import SettingMode from './SettingMode.vue'
-  import UploadZone from './UploadZone.vue'
+  import Utils from '../Utils.vue'
+  import SettingMode from '../parts/SettingMode.vue'
+  import UploadZone from '../parts/UploadZone.vue'
 
   export default {
     name: 'compress',

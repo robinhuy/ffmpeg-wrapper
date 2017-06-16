@@ -11,4 +11,5 @@
     name: 'video-player',
     props: ['videoSource', 'videoType']
   }
+
 </script>

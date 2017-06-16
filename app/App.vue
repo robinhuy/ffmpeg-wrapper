@@ -141,7 +141,7 @@
 </style>
 
 <script>
-  import LeftMenu from './components/LeftMenu.vue'
+  import LeftMenu from './components/parts/LeftMenu.vue'
 
   export default {
     components: {
@@ -153,4 +153,5 @@
       }
     }
   }
+
 </script>

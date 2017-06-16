@@ -22,7 +22,7 @@
 </style>
 
 <script>
-  import Utils from './Utils.vue'
+  import Utils from '../Utils.vue'
 
   export default {
     name: 'setting-mode',
@@ -59,4 +59,5 @@
       }
     }
   }
+
 </script>

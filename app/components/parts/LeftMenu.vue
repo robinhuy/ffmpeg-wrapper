@@ -64,4 +64,5 @@
   export default {
     name: 'left-menu'
   }
+
 </script>
