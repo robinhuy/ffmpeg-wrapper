@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>FFMPEG WRAPPER</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="static/css/element.min.css"/>
 </head>
 <body>
 <div id="app"></div>
 
 <script>
-  const electron = require('electron')  ;
+  const electron = require('electron');
   const {remote} = electron;
   const {Menu, MenuItem} = remote
   const {spawn, exec} = require('child_process');
   const path = require('path');
   const fs = require('fs');
-  const imgPath = path.join(__dirname, 'img');
+  const staticPath = path.join(__dirname, 'static') + '/';
 
-  let OS = process.env.OS || 'mac';
+  let OS = process.platform;
   let ffmpeg = '"' + path.join(__dirname, `ffmpeg-${OS}/ffmpeg`) + '"';
-  if (OS === 'windows') ffmpeg = ffmpeg.replace(/\//g, '\\');
-
-  window.$ = window.jQuery = require('jquery')
+  if (OS === 'win32') ffmpeg = ffmpeg.replace(/\//g, '\\');
 
   const APP_SETTING = {
     getData: function () {
@@ -47,7 +47,7 @@
   const menu = new Menu()
   menu.append(new MenuItem({
     label: 'About FFMEPG Wrapper',
-    icon: 'img/about-icon.png',
+    icon: 'static/img/about-icon.png',
     click() {
       electron.shell.openExternal('https://huydq.xyz')
     }
@@ -55,7 +55,7 @@
   menu.append(new MenuItem({type: 'separator'}))
   menu.append(new MenuItem({
     label: 'Source Code (Github)',
-    icon: 'img/github-icon.png',
+    icon: 'static/img/github-icon.png',
     click() {
       electron.shell.openExternal('https://github.com/robinhuy/ffmpeg-wrapper')
     }

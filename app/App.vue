@@ -14,6 +14,22 @@
   </div>
 </template>
 
+<script>
+  import LeftMenu from './components/LeftMenu.vue'
+
+  export default {
+    components: {
+      LeftMenu
+    },
+    data () {
+      return {
+        allowedExtension: ['.mp4', '.flv', '.MP4', '.FLV']
+      }
+    }
+  }
+
+</script>
+
 <style>
   * {
     box-sizing: border-box;
@@ -138,20 +154,8 @@
     background-color: #ffffff;
     min-height: 100%;
   }
-</style>
 
-<script>
-  import LeftMenu from './components/parts/LeftMenu.vue'
-
-  export default {
-    components: {
-      LeftMenu
-    },
-    data () {
-      return {
-        allowedExtension: ['.mp4', '.flv', '.MP4', '.FLV']
-      }
-    }
+  .el-input.invalid > input {
+    border: 1px solid red;
   }
-
-</script>
+</style>

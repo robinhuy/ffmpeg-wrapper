@@ -5,13 +5,13 @@
     </div>
 </template>
 
-<style scoped>
-
-</style>
-
 <script>
   export default {
     name: 'join-video'
   }
 
 </script>
+
+<style scoped>
+
+</style>

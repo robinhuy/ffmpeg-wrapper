@@ -6,9 +6,9 @@
   "main": "main.js",
   "scripts": {
     "start": "webpack && electron main.js",
-    "mac": "export e=production && export OS=mac && webpack && electron-packager --platform=darwin --icon logo.png.icns --ignore ffmpeg-windows --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
-    "windows": "export e=production && export OS=windows && webpack && electron-packager --platform=win32 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
-    "linux": "export e=production && export OS=linux && webpack && electron-packager --platform=linux --arch=x64 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-mac --ignore ffmpeg-windows --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js ."
+    "darwin": "export e=production && webpack && electron-packager --platform=darwin --icon logo.png.icns --ignore ffmpeg-win32 --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
+    "win32": "export e=production && webpack && electron-packager --platform=win32 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-darwin --ignore ffmpeg-linux --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js .",
+    "linux": "export e=production && webpack && electron-packager --platform=linux --arch=x64 --icon logo.png --ignore logo.png.icns --ignore ffmpeg-darwin --ignore ffmpeg-win32 --ignore app --ignore .idea --ignore README.md --ignore webpack.config.js ."
   },
   "repository": "",
   "keywords": [
@@ -37,6 +37,7 @@
     "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
+    "element-ui": "^1.4.2",
     "jquery": "^3.2.1",
     "vue": "^2.2.5",
     "vue-router": "^2.3.0"

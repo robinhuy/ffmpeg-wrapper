@@ -5,9 +5,7 @@
         <setting-mode :overrideMode="overrideMode"
                       :filePrefix="filePrefix"
                       :canChangeSetting="canChangeSetting"
-                      :overrideModeProp="'overrideMode'"
-                      :filePrefixProp="'filePrefix'"
-                      :componentName="'compress'"></setting-mode>
+                      @changeSetting="changeSetting"></setting-mode>
 
         <upload-zone :actionName="'compress'"
                      :allowedExtension="allowedExtension"
@@ -39,22 +37,10 @@
     </div>
 </template>
 
-<style scoped>
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .btn-compress-all {
-        margin: 15px;
-        font-size: 20px;
-    }
-</style>
-
 <script>
-  import Utils from '../Utils.vue'
-  import SettingMode from '../parts/SettingMode.vue'
-  import UploadZone from '../parts/UploadZone.vue'
+  import Utils from '../components/Utils.vue'
+  import SettingMode from '../components/SettingMode.vue'
+  import UploadZone from '../components/UploadZone.vue'
 
   export default {
     name: 'compress',
@@ -87,12 +73,25 @@
         return !isConverting
       }
     },
-    mounted () {
+    created () {
       // Load last used filePrefix
       this.overrideMode = APP_SETTING.getData().compressOverrideMode || false
       this.filePrefix = APP_SETTING.getData().compressFilePrefix || 'convert-'
     },
     methods: {
+      changeSetting (type, value) {
+        let settings = APP_SETTING.getData()
+
+        if (type === 1) {
+          this.overrideMode = value
+          settings.compressOverrideMode = value
+        } else {
+          this.filePrefix = value
+          settings.compressFilePrefix = value
+        }
+
+        APP_SETTING.setData(settings)
+      },
       mergeUploadFiles (files) {
         // Convert Object to Array
         let arr = Object.keys(files).map(key => {
@@ -255,3 +254,15 @@
   }
 
 </script>
+
+<style scoped>
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .btn-compress-all {
+        margin: 15px;
+        font-size: 20px;
+    }
+</style>

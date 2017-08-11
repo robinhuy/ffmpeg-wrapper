@@ -27,7 +27,7 @@ function createWindow () {
 
   // Open the DevTools
   if (process.env.e !== 'production')
-    mainWindow.webContents.openDevTools({mode: 'detach'})
+    mainWindow.webContents.openDevTools({mode: 'right'})
 }
 
 // When Electron has finished initialization and is ready to create browser windows

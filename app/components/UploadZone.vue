@@ -20,6 +20,46 @@
   </div>
 </template>
 
+<script>
+  export default {
+    name: 'upload-zone',
+    props: ['actionName', 'isMultiple', 'allowedExtension', 'methodOnSelect'],
+    data () {
+      return {
+        imgSource: staticPath + 'img/choose-files.png',
+        isDragOver: false
+      }
+    },
+    methods: {
+      mouseOverImage () {
+        this.imgSource = staticPath + 'img/choose-files-hover.png'
+      },
+      mouseOutImage () {
+        this.imgSource = staticPath + 'img/choose-files.png'
+      },
+      uploadFiles () {
+        document.getElementById('input-files').click();
+      },
+      dragFiles (e) {
+        e.dataTransfer.dropEffect = 'copy';
+        this.isDragOver = true
+      },
+      dragLeave (e) {
+        this.isDragOver = false
+      },
+      dropFiles (e) {
+        this.$parent[this.methodOnSelect](e.dataTransfer.files)
+        this.isDragOver = false
+      },
+      chooseFiles (e) {
+        this.$parent[this.methodOnSelect](e.target.files)
+        document.getElementById('input-files').value = null;
+      }
+    }
+  }
+
+</script>
+
 <style scoped>
   #upload-zone {
     height: 250px;
@@ -57,43 +97,3 @@
     display: none;
   }
 </style>
-
-<script>
-  export default {
-    name: 'upload-zone',
-    props: ['actionName', 'isMultiple', 'allowedExtension', 'methodOnSelect'],
-    data () {
-      return {
-        imgSource: imgPath + '/choose-files.png',
-        isDragOver: false
-      }
-    },
-    methods: {
-      mouseOverImage () {
-        this.imgSource = imgPath + '/choose-files-hover.png'
-      },
-      mouseOutImage () {
-        this.imgSource = imgPath + '/choose-files.png'
-      },
-      uploadFiles () {
-        document.getElementById('input-files').click();
-      },
-      dragFiles (e) {
-        e.dataTransfer.dropEffect = 'copy';
-        this.isDragOver = true
-      },
-      dragLeave (e) {
-        this.isDragOver = false
-      },
-      dropFiles (e) {
-        this.$parent[this.methodOnSelect](e.dataTransfer.files)
-        this.isDragOver = false
-      },
-      chooseFiles (e) {
-        this.$parent[this.methodOnSelect](e.target.files)
-        document.getElementById('input-files').value = null;
-      }
-    }
-  }
-
-</script>

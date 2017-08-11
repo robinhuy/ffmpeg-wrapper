@@ -15,9 +15,7 @@
       <setting-mode :overrideMode="overrideMode"
                     :filePrefix="filePrefix"
                     :canChangeSetting="canChangeSetting"
-                    :overrideModeProp="'overrideMode'"
-                    :filePrefixProp="'filePrefix'"
-                    :componentName="'cut'"></setting-mode>
+                    @changeSetting="changeSetting"></setting-mode>
 
       <label>
         Start time
@@ -54,23 +52,11 @@
   </div>
 </template>
 
-<style scoped>
-  #video-player {
-    float: left;
-    width: 70%;
-  }
-
-  #setup {
-    float: left;
-    width: 30%;
-  }
-</style>
-
 <script>
-  import Utils from '../Utils.vue'
-  import SettingMode from '../parts/SettingMode.vue'
-  import UploadZone from '../parts/UploadZone.vue'
-  import VideoPlayer from '../parts/VideoPlayer.vue';
+  import Utils from '../components/Utils.vue'
+  import SettingMode from '../components/SettingMode.vue'
+  import UploadZone from '../components/UploadZone.vue'
+  import VideoPlayer from '../components/VideoPlayer.vue';
 
   export default {
     name: 'cut',
@@ -98,7 +84,25 @@
         return true
       }
     },
+    created () {
+      // Load last used filePrefix
+      this.overrideMode = APP_SETTING.getData().cutOverrideMode || false
+      this.filePrefix = APP_SETTING.getData().cutFilePrefix || 'convert-'
+    },
     methods: {
+      changeSetting (type, value) {
+        let settings = APP_SETTING.getData()
+
+        if (type === 1) {
+          this.overrideMode = value
+          settings.cutOverrideMode = value
+        } else {
+          this.filePrefix = value
+          settings.cutFilePrefix = value
+        }
+
+        APP_SETTING.setData(settings)
+      },
       loadVideo (files) {
         this.video = files[0]
         this.videoSource = files[0].path
@@ -184,3 +188,15 @@
   }
 
 </script>
+
+<style scoped>
+  #video-player {
+    float: left;
+    width: 70%;
+  }
+
+  #setup {
+    float: left;
+    width: 30%;
+  }
+</style>

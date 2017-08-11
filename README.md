@@ -5,8 +5,10 @@ Desktop Application base on FFMPEG
 1. Install NodeJS
 
     [https://nodejs.org/en/](https://nodejs.org/en/)
+    
+    or using [nvm](https://github.com/creationix/nvm)
 
-2. Install dependencies
+2. Install FFMPEG Wrapper & dependencies
 
 ```
     $ git clone https://github.com/robinhuy/ffmpeg-wrapper
@@ -15,20 +17,6 @@ Desktop Application base on FFMPEG
 ```
 
 3. Run app
-
-- On Windows:
-
-```
-    $ export OS=windows && npm start
-```
-
-- On Linux:
-
-```
-    $ export OS=linux && npm start
-```
-
-- On Mac:
 
 ```
     $ npm start
@@ -39,18 +27,19 @@ Desktop Application base on FFMPEG
 1. For Windows:
 
 ```
-    $ npm windows
+    $ npm win32
 ```
 
-2. For Linux:
+2. For Mac:
+
+```
+    $ npm darwin
+```
+
+3. For Linux:
 
 ```
     $ npm linux
 ```
 
-3. For Mac:
-
-```
-    $ npm mac
-```
 

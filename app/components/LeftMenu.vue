@@ -29,6 +29,13 @@
   </div>
 </template>
 
+<script>
+  export default {
+    name: 'left-menu'
+  }
+
+</script>
+
 <style scoped>
   .bg {
     color: #ffffff;
@@ -65,10 +72,3 @@
     background-color: #434b53;
   }
 </style>
-
-<script>
-  export default {
-    name: 'left-menu'
-  }
-
-</script>

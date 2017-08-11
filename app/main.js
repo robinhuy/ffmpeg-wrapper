@@ -1,14 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import App from './App.vue'
-import Compress from './components/pages/Compress.vue'
-import Convert from './components/pages/Convert.vue'
-import Cut from './components/pages/Cut.vue'
-import Split from './components/pages/Split.vue'
-import Join from './components/pages/Join.vue'
-import AdjustVolume from './components/pages/AdjustVolume.vue'
-import Home from './components/pages/Home.vue'
+import Element from 'element-ui'
 
+import App from './App.vue'
+import Compress from './pages/Compress.vue'
+import Convert from './pages/Convert.vue'
+import Cut from './pages/Cut.vue'
+import Split from './pages/Split.vue'
+import Join from './pages/Join.vue'
+import AdjustVolume from './pages/AdjustVolume.vue'
+import Home from './pages/Home.vue'
+
+Vue.use(Element)
 Vue.use(VueRouter)
 
 // Define routers
