@@ -30,6 +30,8 @@
 
 </script>
 
+<style src="element-ui/lib/theme-default/index.css"></style>
+
 <style>
   * {
     box-sizing: border-box;
@@ -105,7 +107,7 @@
     overflow: hidden;
     background-color: #f5f5f5;
     border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+     -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
     box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
   }
 
@@ -117,10 +119,10 @@
     line-height: 20px;
     color: #fff;
     background-color: #337ab7;
-    -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+     -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
     box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-    -webkit-transition: width .6s ease;
-    -o-transition: width .6s ease;
+     -webkit-transition: width .6s ease;
+     -o-transition: width .6s ease;
     transition: width .6s ease;
   }
 
@@ -137,8 +139,8 @@
 
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
   }
 
   #left-menu {
