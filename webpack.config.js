@@ -18,13 +18,13 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader'
       },
-      // {
-      //   test: /\.css$/,
-      //   loader: 'css-loader'
-      // },
+      {
+        test: /\.css$/,
+        loader: 'css-loader'
+      },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
-        loader: 'file-loader?limit=100000'
+        loader: 'url-loader?limit=100000'
       },
       {
         test: /\.js$/,

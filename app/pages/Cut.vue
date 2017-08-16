@@ -18,32 +18,32 @@
                     @changeSetting="changeSetting"></setting-mode>
 
       <label>
-        Start time
-        <input type="text" id="start-time"
-               v-model.trim="startTime"
-               @change="validateDuration('startTime')"/>
-        <button type="button"
-                class="btn btn-set-time"
-                @click="getCurrentTime('startTime')">Get current time
-        </button>
+        <el-input id="start-time"
+                  size="small"
+                  v-model.trim="startTime"
+                  @change="validateDuration('startTime')">
+          <template slot="prepend">Start time</template>
+        </el-input>
+
+        <el-button type="info" @click="getCurrentTime('startTime')">Get current time</el-button>
       </label>
 
       <label>
-        End time
-        <input type="text" id="end-time"
-               v-model.trim="endTime"
-               @change="validateDuration('endTime')"/>
-        <button type="button"
-                class="btn btn-set-time"
-                @click="getCurrentTime('endTime')">Get current time
-        </button>
+        <el-input id="end-time"
+                  class="label"
+                  size="small"
+                  v-model.trim="endTime"
+                  @change="validateDuration('endTime')">
+          <template slot="prepend">End time</template>
+        </el-input>
+
+        <el-button type="info" @click="getCurrentTime('endTime')">Get current time</el-button>
       </label>
 
-      <button type="button"
-              class="btn btn-cut"
-              :class="{disabled: startTime === '' || endTime === ''}"
-              @click="cutVideo">Cut video
-      </button>
+      <el-button type="primary"
+                 size="large"
+                 :disabled="startTime === '' || endTime === ''"
+                 @click="cutVideo">Cut video</el-button>
     </div>
 
     <div class="progress">
@@ -57,10 +57,14 @@
   import SettingMode from '../components/SettingMode.vue'
   import UploadZone from '../components/UploadZone.vue'
   import VideoPlayer from '../components/VideoPlayer.vue';
+  import ElInput from "../../node_modules/element-ui/packages/input/src/input.vue";
+  import ElButton from "../../node_modules/element-ui/packages/button/src/button.vue";
 
   export default {
     name: 'cut',
     components: {
+      ElButton,
+      ElInput,
       VideoPlayer,
       SettingMode,
       UploadZone

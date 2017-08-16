@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="upload-zone" class="center"
-         :class="{hover: isDragOver}"
+         :class="{'is-drag-over': isDragOver}"
          @click="uploadFiles"
          @dragover.stop.prevent="dragFiles"
          @dragleave.stop.prevent="dragLeave"
@@ -63,14 +63,21 @@
 <style scoped>
   #upload-zone {
     height: 250px;
-    border: 2px dashed #4f9eb5;
-    border-radius: 5px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
     cursor: pointer;
     color: #616161;
   }
 
-  #upload-zone.hover {
-    background-color: grey;
+  #upload-zone:hover {
+    color: #000000;
+    border-color: #20a0ff;
+  }
+
+  #upload-zone.is-drag-over {
+    color: #000000;
+    background-color: rgba(32,159,255,.06);
+    border: 2px dashed #20a0ff;
   }
 
   #upload-zone img {
@@ -87,10 +94,6 @@
   #upload-zone .message {
     margin-top: 20px;
     font-size: 18px;
-  }
-
-  #upload-zone:hover {
-    color: #000000;
   }
 
   #input-files {

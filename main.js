@@ -9,7 +9,10 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window
-  mainWindow = new BrowserWindow({width: 1024, height: 768})
+  if (process.env.e !== 'production')
+    mainWindow = new BrowserWindow({width: 1300, height: 768})
+  else
+    mainWindow = new BrowserWindow({width: 1024, height: 768})
 
   //todo: save window size to setting
   // Load the index.html of the app

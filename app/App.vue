@@ -44,7 +44,10 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #32373d;
+    background-color: #324157;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   img {
@@ -71,76 +74,22 @@
     text-align: center;
   }
 
-  .btn {
-    padding: 6px 12px;
-    text-align: center;
-    transition: all 50ms;
-    color: #ffffff;
-    background-color: #2dbefb;
-    border: 1px solid #2dbefb;
-    border-radius: 3px;
-    text-shadow: none;
-    box-shadow: none;
-    cursor: pointer;
-  }
-
-  .btn, .btn:active {
-    outline: 0;
-  }
-
-  .btn:hover {
-    background-color: #03a9f4;
-    border-color: #03a9f4;
-  }
-
-  .btn.disabled {
-    background-color: #373e43;
-    border-color: #373e43;
-    cursor: not-allowed;
-    box-shadow: none;
-    opacity: 0.65;
-  }
-
-  .progress {
-    height: 20px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-     -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
-  }
-
-  .progress .progress-bar {
-    float: left;
-    width: 0;
-    height: 100%;
-    font-size: 12px;
-    line-height: 20px;
-    color: #fff;
-    background-color: #337ab7;
-     -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-     -webkit-transition: width .6s ease;
-     -o-transition: width .6s ease;
+  /* Override Element */
+  .el-progress-bar__inner {
+    -webkit-transition: width .6s ease;
+    -o-transition: width .6s ease;
     transition: width .6s ease;
   }
 
-  .progress .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0,0,0,0);
-    border: 0;
+  .el-input-group--prepend > .el-input-group__prepend {
+    background-color: transparent;
+    color: #5e6d82;
+    font-size: 1rem;
+    border: none;
   }
 
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-     -webkit-font-smoothing: antialiased;
-     -moz-osx-font-smoothing: grayscale;
+  .el-input.invalid > input {
+    border: 1px solid red;
   }
 
   #left-menu {
@@ -155,9 +104,5 @@
     padding: 15px;
     background-color: #ffffff;
     min-height: 100%;
-  }
-
-  .el-input.invalid > input {
-    border: 1px solid red;
   }
 </style>

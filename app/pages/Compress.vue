@@ -13,26 +13,36 @@
                      :methodOnSelect="'mergeUploadFiles'"></upload-zone>
 
         <div class="center">
-            <button type="button"
-                    class="btn btn-compress-all"
-                    :class="{disabled: selectedFiles.length === 0 || (!this.overrideMode && this.filePrefix === '')}"
-                    @click="compressAll">Compress all
-            </button>
+            <el-button type="primary"
+                       size="large"
+                       :disabled="selectedFiles.length === 0 || (!this.overrideMode && this.filePrefix === '')"
+                       @click="compressAll">
+                Compress all
+            </el-button>
 
-            <ul>
-                <li v-for="(file, index) in selectedFiles" :key="index">
-                    <span>{{ file.name }}</span>
-                    <div class="progress">
-                        <div class="progress-bar" :style="'width: ' + file.progressPercentage + '%'"></div>
+            <div>
+                <el-card class="box-card" v-for="(file, index) in selectedFiles" :key="index">
+                    <div slot="header" class="clearfix">
+                        {{ file.name }}
                     </div>
 
-                    <button type="button" @click="compressOne(index)"
-                            v-if="!file.isConverting && !file.isStop">Compress</button>
-                    <button type="button" @click="removeFile(index)">
+                    <div class="progress">
+                        <el-progress :stroke-width="18"
+                                     :status="file.progressPercentage === 100 ? 'success' : file.isStop ? 'exception' : ''"
+                                     :percentage="file.progressPercentage"></el-progress>
+                    </div>
+
+                    <el-button type="info"
+                               @click="compressOne(index)"
+                               v-if="!file.isConverting && !file.isStop">Compress
+                    </el-button>
+
+                    <el-button :type="file.progressPercentage === 100 ? 'success' : 'danger'"
+                               @click="removeFile(index)">
                         {{ file.isConverting && !file.isStop ? 'Stop' : 'Remove' }}
-                    </button>
-                </li>
-            </ul>
+                    </el-button>
+                </el-card>
+            </div>
         </div>
     </div>
 </template>
@@ -41,15 +51,17 @@
   import Utils from '../components/Utils.vue'
   import SettingMode from '../components/SettingMode.vue'
   import UploadZone from '../components/UploadZone.vue'
+  import ElButton from "../../node_modules/element-ui/packages/button/src/button.vue";
 
   export default {
     name: 'compress',
     components: {
+      ElButton,
       SettingMode,
       UploadZone
     },
     props: ['allowedExtension'],
-    data () {
+    data() {
       return {
         overrideMode: false,
         filePrefix: 'convert-',
@@ -58,7 +70,7 @@
       }
     },
     computed: {
-      canChangeSetting () {
+      canChangeSetting() {
         // Not allow change setting when converting
         let isConverting = false
         let numberFiles = this.selectedFiles.length
@@ -73,13 +85,13 @@
         return !isConverting
       }
     },
-    created () {
+    created() {
       // Load last used filePrefix
       this.overrideMode = APP_SETTING.getData().compressOverrideMode || false
       this.filePrefix = APP_SETTING.getData().compressFilePrefix || 'convert-'
     },
     methods: {
-      changeSetting (type, value) {
+      changeSetting(type, value) {
         let settings = APP_SETTING.getData()
 
         if (type === 1) {
@@ -92,7 +104,7 @@
 
         APP_SETTING.setData(settings)
       },
-      mergeUploadFiles (files) {
+      mergeUploadFiles(files) {
         // Convert Object to Array
         let arr = Object.keys(files).map(key => {
           return files[key]
@@ -112,7 +124,7 @@
           }
         }
       },
-      compressAll () {
+      compressAll() {
         // Compress files which not converting
         let numberFiles = this.selectedFiles.length
 
@@ -130,7 +142,7 @@
           })
         }
       },
-      compressOne (index, numberFiles) {
+      compressOne(index, numberFiles) {
         return new Promise((resolve, reject) => {
           // Compress file which not converting
           let file = this.selectedFiles[index]
@@ -167,7 +179,7 @@
                   current = 3600 * current[0] + 60 * current[1] + +current[2]
                   current = Math.round(current / duration * 100)
 
-                  if (current > 0) {
+                  if (current > 0 && current <= 100) {
                     file.progressPercentage = current
 
                     // Update selectedFiles
@@ -208,7 +220,7 @@
           }
         })
       },
-      removeFile (index) {
+      removeFile(index) {
         // Stop converting process
         if (this.selectedFiles[index].convertProcess) {
           this.selectedFiles[index].convertProcess.kill('SIGINT')
@@ -221,7 +233,7 @@
           this.selectedFiles.splice(index, 1)
         }
       },
-      saveSetting (type) {
+      saveSetting(type) {
         let settings = APP_SETTING.getData()
 
         if (type === 'mode') {
@@ -256,13 +268,8 @@
 </script>
 
 <style scoped>
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .btn-compress-all {
-        margin: 15px;
-        font-size: 20px;
-    }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
 </style>

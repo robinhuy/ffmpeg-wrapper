@@ -7,10 +7,12 @@
 
       <el-col :span="12">
         <label v-if="!overrideMode">
-          File Prefix
-          <el-input :class="{invalid: this.prefix === ''}"
+          <el-input size="small"
+                    :class="{invalid: this.prefix === ''}"
                     v-model="prefix"
-                    @change="saveSetting(2)"></el-input>
+                    @change="saveSetting(2)">
+            <template slot="prepend">File Prefix</template>
+          </el-input>
         </label>
       </el-col>
     </el-row>
