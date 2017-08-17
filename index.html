@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>FFMPEG WRAPPER</title>
-    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
     <link href="static/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -19,7 +18,7 @@
   const staticPath = path.join(__dirname, 'static') + '/';
 
   let OS = process.platform;
-  let ffmpeg = '"' + path.join(__dirname, `ffmpeg-${OS}/ffmpeg`) + '"';
+  let ffmpeg = '"' + path.join(__dirname, `static/ffmpeg/${OS}/ffmpeg`) + '"';
   if (OS === 'win32') ffmpeg = ffmpeg.replace(/\//g, '\\');
 
   const APP_SETTING = {

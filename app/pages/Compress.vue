@@ -25,6 +25,7 @@
                 <el-card class="box-card" v-for="(file, index) in selectedFiles" :key="index">
                     <div slot="header" class="clearfix">
                         {{ file.name }}
+                        <!--todo: move stop & remove button here-->
                     </div>
 
                     <el-progress :stroke-width="15"
@@ -221,6 +222,7 @@
       },
       removeFile(index) {
         // Stop converting process
+//        todo: stop then remove or resume?
         if (this.selectedFiles[index].convertProcess) {
           this.selectedFiles[index].convertProcess.kill('SIGINT')
           this.selectedFiles[index].convertProcess = null
