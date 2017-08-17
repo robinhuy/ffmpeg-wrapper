@@ -12,18 +12,10 @@
                      :isMultiple="true"
                      :methodOnSelect="'mergeUploadFiles'"></upload-zone>
 
-        <div class="center">
-            <el-button type="primary"
-                       size="large"
-                       style="margin-top: 20px;"
-                       :disabled="selectedFiles.length === 0 || (!this.overrideMode && this.filePrefix === '')"
-                       @click="compressAll">
-                Compress all
-            </el-button>
-
-            <div>
+        <div class="text-right">
+            <transition-group name="el-fade-in-linear">
                 <el-card class="box-card" v-for="(file, index) in selectedFiles" :key="index">
-                    <div slot="header" class="clearfix">
+                    <div slot="header" class="clearfix text-left">
                         {{ file.name }}
                         <!--todo: move stop & remove button here-->
                     </div>
@@ -42,6 +34,15 @@
                         {{ file.isConverting && !file.isStop ? 'Stop' : 'Remove' }}
                     </el-button>
                 </el-card>
+            </transition-group>
+
+            <div class="btn-compress-all text-center">
+                <el-button type="primary"
+                           size="large"
+                           :disabled="selectedFiles.length === 0 || (!this.overrideMode && this.filePrefix === '')"
+                           @click="compressAll">
+                    Compress all videos
+                </el-button>
             </div>
         </div>
     </div>
@@ -275,5 +276,9 @@
 
   .box-card button {
     margin-top: 5px;
+  }
+
+  .btn-compress-all {
+    margin-top: 20px;
   }
 </style>

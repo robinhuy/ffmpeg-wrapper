@@ -49,7 +49,7 @@
                         </el-input>
                     </el-form-item>
 
-                    <div class="center" style="margin-top: 10px;">
+                    <div class="text-center" style="margin-top: 10px;">
                         <el-button type="primary"
                                    size="large"
                                    :disabled="startTime === '' || endTime === ''"
@@ -206,8 +206,12 @@
 </script>
 
 <style>
-    .el-progress.el-progress--line {
-        margin-bottom: 15px;
-    }
+  video {
+    background: #000000;
+  }
+
+  .el-progress.el-progress--line {
+    margin-bottom: 15px;
+  }
 </style>
 

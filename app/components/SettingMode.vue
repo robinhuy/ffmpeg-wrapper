@@ -68,3 +68,9 @@
 
 </script>
 
+<style>
+  .el-input.el-input--small {
+    max-width: 250px;
+  }
+</style>
+

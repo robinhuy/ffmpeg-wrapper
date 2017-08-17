@@ -71,8 +71,16 @@
     cursor: pointer;
   }
 
-  .center {
+  .text-center {
     text-align: center;
+  }
+
+  .text-left {
+    text-align: left;
+  }
+
+  .text-right {
+    text-align: right;
   }
 
   /* Override Element */
@@ -91,7 +99,7 @@
   }
 
   #left-menu {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 200px;
