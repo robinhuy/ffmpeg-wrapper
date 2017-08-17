@@ -1,55 +1,65 @@
 <template>
-  <div>
-    <h1>Cut Video/Audio</h1>
+    <div>
+        <h1>Cut Video/Audio</h1>
 
-    <upload-zone :actionName="'cut'"
-                 :allowedExtension="allowedExtension"
-                 :isMultiple="false"
-                 :methodOnSelect="'loadVideo'"></upload-zone>
+        <setting-mode :overrideMode="overrideMode"
+                      :filePrefix="filePrefix"
+                      :canChangeSetting="canChangeSetting"
+                      @changeSetting="changeSetting"></setting-mode>
 
-    <div v-if="isRenderVideoPlayer" id="video-player">
-      <video-player :video-source="videoSource" :video-type="videoType"></video-player>
+        <upload-zone :actionName="'cut'"
+                     :allowedExtension="allowedExtension"
+                     :isMultiple="false"
+                     :methodOnSelect="'loadVideo'"></upload-zone>
+
+        <el-row style="margin-top: 20px;">
+            <el-col :span="24">
+                <!--<el-progress :stroke-width="15"-->
+                <!--:status="file.progressPercentage === 100 ? 'success' : file.isStop ? 'exception' : ''"-->
+                <!--:percentage="file.progressPercentage"></el-progress>-->
+            </el-col>
+
+            <el-col :span="16">
+                <div v-if="isRenderVideoPlayer">
+                    <video-player :video-source="videoSource" :video-type="videoType"></video-player>
+                </div>
+            </el-col>
+
+            <el-col :span="8" style="padding-left: 8px;">
+                <el-form ref="form" label-width="80px">
+                    <el-form-item label="Start time">
+                        <el-input size="small"
+                                  v-model.trim="startTime"
+                                  @change="validateDuration('startTime')">
+                            <el-tooltip slot="append" effect="dark" content="Get current time from video"
+                                        placement="top">
+                                <el-button icon="time" @click="getCurrentTime('startTime')"></el-button>
+                            </el-tooltip>
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item label="End time">
+                        <el-input size="small"
+                                  v-model.trim="endTime"
+                                  @change="validateDuration('endTime')">
+                            <el-tooltip slot="append" effect="dark" content="Get current time from video"
+                                        placement="top">
+                                <el-button icon="time" @click="getCurrentTime('endTime')"></el-button>
+                            </el-tooltip>
+                        </el-input>
+                    </el-form-item>
+
+                    <div class="center" style="margin-top: 10px;">
+                        <el-button type="primary"
+                                   size="large"
+                                   :disabled="startTime === '' || endTime === ''"
+                                   @click="cutVideo">Cut video
+                        </el-button>
+                    </div>
+                </el-form>
+            </el-col>
+        </el-row>
     </div>
-
-    <div id="setup">
-      <setting-mode :overrideMode="overrideMode"
-                    :filePrefix="filePrefix"
-                    :canChangeSetting="canChangeSetting"
-                    @changeSetting="changeSetting"></setting-mode>
-
-      <label>
-        <el-input id="start-time"
-                  size="small"
-                  v-model.trim="startTime"
-                  @change="validateDuration('startTime')">
-          <template slot="prepend">Start time</template>
-        </el-input>
-
-        <el-button type="info" @click="getCurrentTime('startTime')">Get current time</el-button>
-      </label>
-
-      <label>
-        <el-input id="end-time"
-                  class="label"
-                  size="small"
-                  v-model.trim="endTime"
-                  @change="validateDuration('endTime')">
-          <template slot="prepend">End time</template>
-        </el-input>
-
-        <el-button type="info" @click="getCurrentTime('endTime')">Get current time</el-button>
-      </label>
-
-      <el-button type="primary"
-                 size="large"
-                 :disabled="startTime === '' || endTime === ''"
-                 @click="cutVideo">Cut video</el-button>
-    </div>
-
-    <div class="progress">
-      <div class="progress-bar" :style="'width: ' + 10 + '%'"></div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -59,10 +69,12 @@
   import VideoPlayer from '../components/VideoPlayer.vue';
   import ElInput from "../../node_modules/element-ui/packages/input/src/input.vue";
   import ElButton from "../../node_modules/element-ui/packages/button/src/button.vue";
+  import ElRow from "element-ui/packages/row/src/row";
 
   export default {
     name: 'cut',
     components: {
+      ElRow,
       ElButton,
       ElInput,
       VideoPlayer,
@@ -70,7 +82,7 @@
       UploadZone
     },
     props: ['allowedExtension'],
-    data () {
+    data() {
       return {
         overrideMode: false,
         filePrefix: 'cut-',
@@ -84,17 +96,17 @@
       }
     },
     computed: {
-      canChangeSetting () {
+      canChangeSetting() {
         return true
       }
     },
-    created () {
+    created() {
       // Load last used filePrefix
       this.overrideMode = APP_SETTING.getData().cutOverrideMode || false
       this.filePrefix = APP_SETTING.getData().cutFilePrefix || 'convert-'
     },
     methods: {
-      changeSetting (type, value) {
+      changeSetting(type, value) {
         let settings = APP_SETTING.getData()
 
         if (type === 1) {
@@ -107,7 +119,7 @@
 
         APP_SETTING.setData(settings)
       },
-      loadVideo (files) {
+      loadVideo(files) {
         this.video = files[0]
         this.videoSource = files[0].path
         this.videoType = files[0].type
@@ -118,16 +130,16 @@
           this.isRenderVideoPlayer = true
         }, 0)
       },
-      validateDuration (input) {
+      validateDuration(input) {
         if (!this[input].match(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)) {
           alert('Invalid time')
         }
       },
-      getCurrentTime (input) {
+      getCurrentTime(input) {
         let currentSecond = document.getElementsByTagName('video')[0].currentTime
         this[input] = Utils.convertTime(currentSecond)
       },
-      cutVideo () {
+      cutVideo() {
         let file = this.video
 
         if (!this.isCutting) {
@@ -193,14 +205,9 @@
 
 </script>
 
-<style scoped>
-  #video-player {
-    float: left;
-    width: 70%;
-  }
-
-  #setup {
-    float: left;
-    width: 30%;
-  }
+<style>
+    .el-progress.el-progress--line {
+        margin-bottom: 15px;
+    }
 </style>
+

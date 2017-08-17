@@ -48,6 +48,7 @@
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-y: scroll;
   }
 
   img {
@@ -81,11 +82,8 @@
     transition: width .6s ease;
   }
 
-  .el-input-group--prepend > .el-input-group__prepend {
-    background-color: transparent;
-    color: #5e6d82;
-    font-size: 1rem;
-    border: none;
+  .el-input__icon {
+    cursor: pointer;
   }
 
   .el-input.invalid > input {

@@ -15,6 +15,7 @@
         <div class="center">
             <el-button type="primary"
                        size="large"
+                       style="margin-top: 20px;"
                        :disabled="selectedFiles.length === 0 || (!this.overrideMode && this.filePrefix === '')"
                        @click="compressAll">
                 Compress all
@@ -26,11 +27,9 @@
                         {{ file.name }}
                     </div>
 
-                    <div class="progress">
-                        <el-progress :stroke-width="18"
-                                     :status="file.progressPercentage === 100 ? 'success' : file.isStop ? 'exception' : ''"
-                                     :percentage="file.progressPercentage"></el-progress>
-                    </div>
+                    <el-progress :stroke-width="15"
+                                 :status="file.progressPercentage === 100 ? 'success' : file.isStop ? 'exception' : ''"
+                                 :percentage="file.progressPercentage"></el-progress>
 
                     <el-button type="info"
                                @click="compressOne(index)"
@@ -268,8 +267,11 @@
 </script>
 
 <style scoped>
-  ul {
-    list-style-type: none;
-    padding: 0;
+  .box-card {
+    margin-top: 20px;
+  }
+
+  .box-card button {
+    margin-top: 5px;
   }
 </style>

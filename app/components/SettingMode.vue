@@ -1,22 +1,23 @@
 <template>
-  <div>
+  <el-form ref="form" label-width="150px">
     <el-row>
-      <el-col :span="12">
-        <el-checkbox @change="saveSetting(1)" v-model="override">Replace original files</el-checkbox>
+      <el-col :span="10">
+        <el-form-item label="Replace original files">
+          <el-switch v-model="override" @change="saveSetting(1)"></el-switch>
+        </el-form-item>
       </el-col>
 
-      <el-col :span="12">
-        <label v-if="!overrideMode">
+      <el-col :span="14">
+        <el-form-item label="File Prefix" v-if="!overrideMode">
           <el-input size="small"
                     :class="{invalid: this.prefix === ''}"
                     v-model="prefix"
                     @change="saveSetting(2)">
-            <template slot="prepend">File Prefix</template>
           </el-input>
-        </label>
+        </el-form-item>
       </el-col>
     </el-row>
-  </div>
+  </el-form>
 </template>
 
 <script>
