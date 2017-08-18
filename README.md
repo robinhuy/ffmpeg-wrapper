@@ -27,19 +27,19 @@ Desktop Application base on FFMPEG
 1. For Windows:
 
 ```
-    $ npm win32
+    $ npm run win32
 ```
 
 2. For Mac:
 
 ```
-    $ npm darwin
+    $ npm run darwin
 ```
 
 3. For Linux:
 
 ```
-    $ npm linux
+    $ npm run linux
 ```
 
 
