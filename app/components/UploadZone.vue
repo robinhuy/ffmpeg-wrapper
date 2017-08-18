@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="upload-zone" class="center"
+    <div id="upload-zone" class="text-center"
          :class="{'is-drag-over': isDragOver}"
          @click="uploadFiles"
          @dragover.stop.prevent="dragFiles"

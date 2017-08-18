@@ -12,11 +12,17 @@
                      :isMultiple="false"
                      :methodOnSelect="'loadVideo'"></upload-zone>
 
+        <!--<div v-if="video.path !== ''">-->
+            <!--{{ video.progressPercentage }} - -->
+            <!--{{ video.path }} - -->
+            <!--{{ video.name }}-->
+        <!--</div>-->
         <el-row style="margin-top: 20px;">
-            <el-col :span="24">
-                <!--<el-progress :stroke-width="15"-->
-                <!--:status="file.progressPercentage === 100 ? 'success' : file.isStop ? 'exception' : ''"-->
-                <!--:percentage="file.progressPercentage"></el-progress>-->
+            <el-col :span="24" v-if="video.path !== ''">
+
+                <el-progress :stroke-width="15"
+                             :status="video.progressPercentage === 100 ? 'success' : isCutting ? 'exception' : ''"
+                             :percentage="video.progressPercentage"></el-progress>
             </el-col>
 
             <el-col :span="16">
@@ -29,8 +35,8 @@
                 <el-form ref="form" label-width="80px">
                     <el-form-item label="Start time">
                         <el-input size="small"
-                                  v-model.trim="startTime"
-                                  @change="validateDuration('startTime')">
+                                  :class="{invalid: !startTime.match(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)}"
+                                  v-model.trim="startTime">
                             <el-tooltip slot="append" effect="dark" content="Get current time from video"
                                         placement="top">
                                 <el-button icon="time" @click="getCurrentTime('startTime')"></el-button>
@@ -40,8 +46,8 @@
 
                     <el-form-item label="End time">
                         <el-input size="small"
-                                  v-model.trim="endTime"
-                                  @change="validateDuration('endTime')">
+                                  :class="{invalid: !endTime.match(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)}"
+                                  v-model.trim="endTime">
                             <el-tooltip slot="append" effect="dark" content="Get current time from video"
                                         placement="top">
                                 <el-button icon="time" @click="getCurrentTime('endTime')"></el-button>
@@ -52,7 +58,7 @@
                     <div class="text-center" style="margin-top: 10px;">
                         <el-button type="primary"
                                    size="large"
-                                   :disabled="startTime === '' || endTime === ''"
+                                   :disabled="!startTime.match(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/) || !endTime.match(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)"
                                    @click="cutVideo">Cut video
                         </el-button>
                     </div>
@@ -87,11 +93,16 @@
         overrideMode: false,
         filePrefix: 'cut-',
         isRenderVideoPlayer: true,
+        video: {
+          name: '',
+          path: '',
+          cutProcess: null,
+          progressPercentage: 0
+        },
         videoSource: '',
         videoType: 'video/mp4',
         startTime: '00:00:00',
         endTime: '00:00:00',
-        video: null,
         isCutting: false
       }
     },
@@ -120,20 +131,20 @@
         APP_SETTING.setData(settings)
       },
       loadVideo(files) {
+        files[0].progressPercentage = 0
+        files[0].cutProcess = null
         this.video = files[0]
         this.videoSource = files[0].path
         this.videoType = files[0].type
+        this.startTime = '00:00:00'
+        this.endTime = '00:00:00'
+        this.isCutting = false
 
         // Re-render video-player component
         this.isRenderVideoPlayer = false
         setTimeout(() => {
           this.isRenderVideoPlayer = true
         }, 0)
-      },
-      validateDuration(input) {
-        if (!this[input].match(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)) {
-          alert('Invalid time')
-        }
       },
       getCurrentTime(input) {
         let currentSecond = document.getElementsByTagName('video')[0].currentTime
@@ -150,7 +161,7 @@
 
           let newFilePath = path.dirname(file.path) + '/' + newFileName
 
-          file.isCutting = true
+          this.isCutting = true
 
           // Check video duration
           exec(`ffmpeg -i "${file.path}" 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'`, (error, stdout, stderr) => {
@@ -159,12 +170,12 @@
 
               // Cut video from start time to end time
               let cutting = spawn(ffmpeg, ['-i', `"${file.path}"`, '-ss', this.startTime, '-to', this.endTime, '-async', '1', `"${newFilePath}"`, '-y'], {shell: true})
-              file.cutProcess = cutting
+              this.$set(this.video, 'cutProcess', cutting)
 
               // Display progress when cutting
               cutting.stderr.on('data', data => {
                 data = data.toString()
-
+//console.log(data)
                 // Calculate the progress percentage
                 let current = data.match(/time=([0-9:.])*\s/) || ['']
                 current = current[0].trim().split('=')[1] || '0:0:0'
@@ -172,18 +183,19 @@
                 current = 3600 * current[0] + 60 * current[1] + +current[2]
                 current = Math.round(current / duration * 100)
 
-                if (current > 0) {
-                  file.progressPercentage = current
+                if (current > 0 && current <= 100) {
+                  this.$set(this.video, 'progressPercentage', current)
                 }
+
+                console.log('********' + current + '********', this.video.progressPercentage)
               })
 
               // Cut finished
               cutting.on('exit', code => {
                 if (code === 0) {
-                  file.progressPercentage = 100
-                  file.cutProcess = null
-                  file.isCutting = false
-                  file.isStop = true
+                  this.$set(this.video, 'progressPercentage', 100)
+                  this.$set(this.video, 'cutProcess', null)
+                  this.isCutting = false
 
                   if (this.overrideMode) {
                     // Remove old file and replace with new file
